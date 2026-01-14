@@ -11,7 +11,9 @@ import com.javanauta.taskscheduler.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,5 +32,9 @@ public class TaskService {
         Task task = taskConverter.toTask(taskDTO);
 
         return taskConverter.toTaskDTO(taskRepository.save(task));
+    }
+
+    public List<TaskDTO> findTaskByTimePeriod(LocalDateTime initialDateTime, LocalDateTime finalDateTime) {
+        return taskConverter.toTaskDTOList(taskRepository.findByDueDateTimeBetween(initialDateTime, finalDateTime));
     }
 }
