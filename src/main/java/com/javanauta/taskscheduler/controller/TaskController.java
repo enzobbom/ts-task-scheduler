@@ -2,6 +2,8 @@ package com.javanauta.taskscheduler.controller;
 
 import com.javanauta.taskscheduler.business.TaskService;
 import com.javanauta.taskscheduler.business.dto.TaskDTO;
+import com.javanauta.taskscheduler.infrastructure.enums.NotificationStatusEnum;
+import feign.Param;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -32,5 +34,21 @@ public class TaskController {
     @GetMapping
     public ResponseEntity<List<TaskDTO>> findTaskListByUserEmail(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(taskService.findTaskByUserEmail(token));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteTaskById(@RequestParam("id") String id){
+        taskService.deleteTaskById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping
+    public ResponseEntity<TaskDTO> modifyTaskStatusById(@RequestParam("status") NotificationStatusEnum notificationStatusEnum, @RequestParam("id") String id) {
+        return ResponseEntity.ok(taskService.modifyTaskStatusById(notificationStatusEnum, id));
+    }
+
+    @PutMapping
+    public ResponseEntity<TaskDTO> updateTaskById(@RequestBody TaskDTO taskDTO, @RequestParam("id") String id) {
+        return ResponseEntity.ok(taskService.updateTaskById(taskDTO, id));
     }
 }
