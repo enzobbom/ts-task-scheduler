@@ -24,7 +24,6 @@ public class TaskService {
     private final TaskUpdateConverter taskUpdateConverter;
 
     public TaskDTO saveTask(String token, TaskDTO taskDTO) {
-
         taskDTO.setUserEmail(jwtUtil.extractUsername(token.substring(7)));
         taskDTO.setCreationDateTime(LocalDateTime.now());
         taskDTO.setNotificationStatusEnum(NotificationStatusEnum.PENDING);
