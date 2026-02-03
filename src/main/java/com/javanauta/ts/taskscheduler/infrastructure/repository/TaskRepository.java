@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface TaskRepository extends MongoRepository<Task, String> {
-    List<Task> findByDueDateTimeBetween(Instant initialDateTime, Instant finalDateTime);
+    List<Task> findByScheduledDateTimeBetween(Instant initialDateTime, Instant finalDateTime);
     List<Task> findByUserEmail(String userEmail);
 }

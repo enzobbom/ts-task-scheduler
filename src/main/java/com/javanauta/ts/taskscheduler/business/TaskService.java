@@ -43,7 +43,7 @@ public class TaskService {
     }
 
     public List<TaskDTO> findTaskByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
-        return taskConverter.toTaskDTOList(taskRepository.findByDueDateTimeBetween(initialDateTime, finalDateTime));
+        return taskConverter.toTaskDTOList(taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime));
     }
 
     public List<TaskDTO> findTaskByUserEmail(String token) {
