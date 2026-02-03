@@ -61,6 +61,7 @@ public class TaskService {
     public TaskDTO modifyTaskStatusById (NotificationStatusEnum notificationStatusEnum, String id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Task with ID '%s' not found.", id)));
         task.setNotificationStatusEnum(notificationStatusEnum);
+        task.setModificationDateTime(Instant.now());
 
         return taskConverter.toTaskDTO(taskRepository.save(task));
     }
@@ -70,6 +71,7 @@ public class TaskService {
 
         taskUpdateConverter.updateTasks(taskDTO, task);
         validateTimeZoneId(task.getTimeZoneId());
+        task.setModificationDateTime(Instant.now());
 
         return taskConverter.toTaskDTO(taskRepository.save(task));
     }
