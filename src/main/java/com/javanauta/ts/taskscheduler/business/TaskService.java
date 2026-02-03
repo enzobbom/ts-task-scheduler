@@ -11,6 +11,7 @@ import com.javanauta.ts.taskscheduler.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class TaskService {
 
     public TaskDTO saveTask(String token, TaskDTO taskDTO) {
         taskDTO.setUserEmail(jwtUtil.extractUsername(token.substring(7)));
-        taskDTO.setCreationDateTime(LocalDateTime.now());
+        taskDTO.setCreationDateTime(Instant.now());
         taskDTO.setNotificationStatusEnum(NotificationStatusEnum.PENDING);
 
         Task task = taskConverter.toTask(taskDTO);
@@ -33,7 +34,7 @@ public class TaskService {
         return taskConverter.toTaskDTO(taskRepository.save(task));
     }
 
-    public List<TaskDTO> findTaskByTimePeriod(LocalDateTime initialDateTime, LocalDateTime finalDateTime) {
+    public List<TaskDTO> findTaskByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
         return taskConverter.toTaskDTOList(taskRepository.findByDueDateTimeBetween(initialDateTime, finalDateTime));
     }
 
