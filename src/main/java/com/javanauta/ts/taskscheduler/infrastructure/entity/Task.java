@@ -25,4 +25,5 @@ public class Task {
     private String userEmail;
     private Instant modificationDateTime;
     private NotificationStatusEnum notificationStatusEnum;
+    private String timeZoneId;
 }
