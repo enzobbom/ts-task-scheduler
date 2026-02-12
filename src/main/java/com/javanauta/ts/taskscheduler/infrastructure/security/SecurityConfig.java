@@ -34,6 +34,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disables CSRF protection for REST APIs (not needed in stateless APIs)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/actuator/health").permitAll()
                         .anyRequest().authenticated() // Requires authentication for all other requests
                 )
                 .sessionManagement(session -> session
