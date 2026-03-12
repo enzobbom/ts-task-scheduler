@@ -1,8 +1,10 @@
 package com.javanauta.ts.taskscheduler.infrastructure.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +14,22 @@ import java.util.Date;
 @Service
 public class JwtUtil {
 
+    private JwtParser jwtParser;
+
     // Secret key used to sign and verify JWT tokens
     @Value("${ts.jwt.secret}")
     private String secretKey;
 
+    @PostConstruct
+    public void init() {
+        jwtParser = Jwts.parser()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                .build();
+    }
+
     // Extracts claims from the JWT token
     public Claims extractClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))) // Sets secret key to validate signature
-                .build()
+        return jwtParser
                 .parseClaimsJws(token) // Parses the JWT token and gets claims
                 .getBody(); // Returns claims body
     }
