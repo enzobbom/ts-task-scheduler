@@ -23,15 +23,15 @@ public class JwtUtil {
     @PostConstruct
     public void init() {
         jwtParser = Jwts.parser()
-                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .build();
     }
 
     // Extracts claims from the JWT token
     public Claims extractClaims(String token) {
         return jwtParser
-                .parseClaimsJws(token) // Parses the JWT token and gets claims
-                .getBody(); // Returns claims body
+                .parseSignedClaims(token) // Parses the JWT token and gets claims
+                .getPayload(); // Returns claims body
     }
 
     // Extracts username from the JWT token
