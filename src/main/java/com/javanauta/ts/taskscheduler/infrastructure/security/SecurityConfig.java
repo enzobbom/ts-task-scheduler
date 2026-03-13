@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -16,11 +17,11 @@ public class SecurityConfig {
 
     // JwtUtil and UserDetailsService instances injected by Spring
     private final JwtRequestFilter jwtRequestFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final AuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     // Constructor for dependency injection of JwtUtil and UserDetailsService
     @Autowired
-    public SecurityConfig(JwtRequestFilter jwtRequestFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter, AuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.jwtRequestFilter = jwtRequestFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
 
@@ -28,7 +29,7 @@ public class SecurityConfig {
 
     // Security filter configuration
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         // Creates a JwtRequestFilter instance using JwtUtil and UserDetailsService
 
         http

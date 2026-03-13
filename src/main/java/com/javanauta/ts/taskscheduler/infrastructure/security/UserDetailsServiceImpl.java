@@ -2,15 +2,17 @@ package com.javanauta.ts.taskscheduler.infrastructure.security;
 
 import com.javanauta.ts.taskscheduler.business.dto.UserDTO;
 import com.javanauta.ts.taskscheduler.infrastructure.client.UserClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserDetailsServiceImpl {
 
-    @Autowired
-    private UserClient userClient;
+    private final UserClient userClient;
+
+    public UserDetailsServiceImpl(UserClient userClient) {
+        this.userClient = userClient;
+    }
 
     public UserDetails loadUserDetails(String email, String token) {
         UserDTO userDTO = userClient.getUserByEmail(email, token);
