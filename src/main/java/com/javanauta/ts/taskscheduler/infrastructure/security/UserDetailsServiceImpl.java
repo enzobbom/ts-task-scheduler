@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.infrastructure.security;
 
-import com.javanauta.ts.taskscheduler.business.dto.UserDTO;
+import com.javanauta.ts.taskscheduler.service.dto.UserDTO;
 import com.javanauta.ts.taskscheduler.infrastructure.client.UserClient;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

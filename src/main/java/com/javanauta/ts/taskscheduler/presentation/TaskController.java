@@ -1,7 +1,7 @@
-package com.javanauta.ts.taskscheduler.controller;
+package com.javanauta.ts.taskscheduler.presentation;
 
-import com.javanauta.ts.taskscheduler.business.TaskService;
-import com.javanauta.ts.taskscheduler.business.dto.TaskDTO;
+import com.javanauta.ts.taskscheduler.service.TaskService;
+import com.javanauta.ts.taskscheduler.service.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.infrastructure.enums.NotificationStatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

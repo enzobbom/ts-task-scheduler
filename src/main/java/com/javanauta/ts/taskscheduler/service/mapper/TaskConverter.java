@@ -1,6 +1,6 @@
-package com.javanauta.ts.taskscheduler.business.mapper;
+package com.javanauta.ts.taskscheduler.service.mapper;
 
-import com.javanauta.ts.taskscheduler.business.dto.TaskDTO;
+import com.javanauta.ts.taskscheduler.service.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.infrastructure.entity.Task;
 import org.mapstruct.Mapper;
 

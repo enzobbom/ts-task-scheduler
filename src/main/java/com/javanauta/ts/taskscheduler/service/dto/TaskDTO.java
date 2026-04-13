@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.business.dto;
+package com.javanauta.ts.taskscheduler.service.dto;
 
 import com.javanauta.ts.taskscheduler.infrastructure.enums.NotificationStatusEnum;
 import lombok.*;

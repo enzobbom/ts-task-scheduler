@@ -1,8 +1,8 @@
-package com.javanauta.ts.taskscheduler.business;
+package com.javanauta.ts.taskscheduler.service;
 
-import com.javanauta.ts.taskscheduler.business.dto.TaskDTO;
-import com.javanauta.ts.taskscheduler.business.mapper.TaskConverter;
-import com.javanauta.ts.taskscheduler.business.mapper.TaskUpdateConverter;
+import com.javanauta.ts.taskscheduler.service.dto.TaskDTO;
+import com.javanauta.ts.taskscheduler.service.mapper.TaskConverter;
+import com.javanauta.ts.taskscheduler.service.mapper.TaskUpdateConverter;
 import com.javanauta.ts.taskscheduler.infrastructure.entity.Task;
 import com.javanauta.ts.taskscheduler.infrastructure.enums.NotificationStatusEnum;
 import com.javanauta.ts.taskscheduler.infrastructure.exception.ValidationErrorException;

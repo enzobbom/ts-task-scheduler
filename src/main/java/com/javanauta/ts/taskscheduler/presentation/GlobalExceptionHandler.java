@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.controller;
+package com.javanauta.ts.taskscheduler.presentation;
 
 import com.javanauta.ts.taskscheduler.infrastructure.exception.ValidationErrorException;
 import com.javanauta.ts.taskscheduler.infrastructure.exception.ResourceNotFoundException;
