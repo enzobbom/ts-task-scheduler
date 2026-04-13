@@ -1,7 +1,7 @@
-package com.javanauta.ts.taskscheduler.presentation;
+package com.javanauta.ts.taskscheduler.presentation.exception;
 
-import com.javanauta.ts.taskscheduler.infrastructure.exception.ValidationErrorException;
-import com.javanauta.ts.taskscheduler.infrastructure.exception.ResourceNotFoundException;
+import com.javanauta.ts.taskscheduler.service.exception.ValidationErrorException;
+import com.javanauta.ts.taskscheduler.service.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.infrastructure.client;
 
-import com.javanauta.ts.taskscheduler.service.dto.UserDTO;
+import com.javanauta.ts.taskscheduler.presentation.dto.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

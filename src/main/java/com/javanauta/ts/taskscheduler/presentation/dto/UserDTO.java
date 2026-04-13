@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.service.dto;
+package com.javanauta.ts.taskscheduler.presentation.dto;
 
 import lombok.*;
 

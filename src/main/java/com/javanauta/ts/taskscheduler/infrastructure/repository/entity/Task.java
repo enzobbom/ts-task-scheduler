@@ -1,6 +1,6 @@
-package com.javanauta.ts.taskscheduler.infrastructure.entity;
+package com.javanauta.ts.taskscheduler.infrastructure.repository.entity;
 
-import com.javanauta.ts.taskscheduler.infrastructure.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.service.model.enums.NotificationStatusEnum;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

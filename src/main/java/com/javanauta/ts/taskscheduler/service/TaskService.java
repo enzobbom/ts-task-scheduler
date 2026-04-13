@@ -1,12 +1,12 @@
 package com.javanauta.ts.taskscheduler.service;
 
-import com.javanauta.ts.taskscheduler.service.dto.TaskDTO;
+import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.service.mapper.TaskConverter;
 import com.javanauta.ts.taskscheduler.service.mapper.TaskUpdateConverter;
-import com.javanauta.ts.taskscheduler.infrastructure.entity.Task;
-import com.javanauta.ts.taskscheduler.infrastructure.enums.NotificationStatusEnum;
-import com.javanauta.ts.taskscheduler.infrastructure.exception.ValidationErrorException;
-import com.javanauta.ts.taskscheduler.infrastructure.exception.ResourceNotFoundException;
+import com.javanauta.ts.taskscheduler.infrastructure.repository.entity.Task;
+import com.javanauta.ts.taskscheduler.service.model.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.service.exception.ValidationErrorException;
+import com.javanauta.ts.taskscheduler.service.exception.ResourceNotFoundException;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
 import com.javanauta.ts.taskscheduler.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
