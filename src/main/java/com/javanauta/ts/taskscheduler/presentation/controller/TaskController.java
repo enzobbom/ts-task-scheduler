@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.presentation.controller;
 
-import com.javanauta.ts.taskscheduler.application.TaskService;
+import com.javanauta.ts.taskscheduler.application.service.TaskService;
 import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import lombok.RequiredArgsConstructor;

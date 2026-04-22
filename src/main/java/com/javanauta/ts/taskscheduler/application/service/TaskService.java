@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.application;
+package com.javanauta.ts.taskscheduler.application.service;
 
 import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskConverter;
