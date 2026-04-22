@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.infrastructure.repository;
 
-import com.javanauta.ts.taskscheduler.infrastructure.repository.entity.Task;
+import com.javanauta.ts.taskscheduler.domain.model.Task;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

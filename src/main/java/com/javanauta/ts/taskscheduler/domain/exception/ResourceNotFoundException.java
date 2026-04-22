@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.service.exception;
+package com.javanauta.ts.taskscheduler.domain.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

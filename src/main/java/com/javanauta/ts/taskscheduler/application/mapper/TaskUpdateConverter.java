@@ -1,7 +1,7 @@
-package com.javanauta.ts.taskscheduler.service.mapper;
+package com.javanauta.ts.taskscheduler.application.mapper;
 
 import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
-import com.javanauta.ts.taskscheduler.infrastructure.repository.entity.Task;
+import com.javanauta.ts.taskscheduler.domain.model.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;

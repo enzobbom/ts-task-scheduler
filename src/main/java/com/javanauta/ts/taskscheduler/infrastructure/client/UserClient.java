@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.infrastructure.client;
 
-import com.javanauta.ts.taskscheduler.presentation.dto.UserDTO;
+import com.javanauta.ts.taskscheduler.infrastructure.client.dto.ExternalUserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserClient {
 
     @GetMapping
-    UserDTO getUserByEmail(@RequestParam("email") String email, @RequestHeader("Authorization") String token);
+    ExternalUserDTO getUserByEmail(@RequestParam("email") String email, @RequestHeader("Authorization") String token);
 }
