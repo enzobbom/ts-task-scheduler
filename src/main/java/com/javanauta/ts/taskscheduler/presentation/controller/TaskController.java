@@ -19,8 +19,8 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<TaskDTO> saveTask(@RequestBody TaskDTO taskDTO, @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(taskService.saveTask(token, taskDTO));
+    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDTO, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(taskService.createTask(token, taskDTO));
     }
 
     @GetMapping("/events")
@@ -35,17 +35,17 @@ public class TaskController {
 
     @DeleteMapping
     public ResponseEntity<Void> deleteTaskById(@RequestParam("id") String id){
-        taskService.deleteTaskById(id);
+        taskService.deleteTask(id);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping
-    public ResponseEntity<TaskDTO> modifyTaskStatusById(@RequestParam("status") NotificationStatusEnum notificationStatusEnum, @RequestParam("id") String id) {
-        return ResponseEntity.ok(taskService.modifyTaskStatusById(notificationStatusEnum, id));
+    public ResponseEntity<TaskDTO> updateTaskStatus(@RequestParam("status") NotificationStatusEnum notificationStatusEnum, @RequestParam("id") String id) {
+        return ResponseEntity.ok(taskService.updateTaskStatus(notificationStatusEnum, id));
     }
 
     @PutMapping
-    public ResponseEntity<TaskDTO> updateTaskById(@RequestBody TaskDTO taskDTO, @RequestParam("id") String id) {
-        return ResponseEntity.ok(taskService.updateTaskById(taskDTO, id));
+    public ResponseEntity<TaskDTO> updateTask(@RequestBody TaskDTO taskDTO, @RequestParam("id") String id) {
+        return ResponseEntity.ok(taskService.updateTask(taskDTO, id));
     }
 }

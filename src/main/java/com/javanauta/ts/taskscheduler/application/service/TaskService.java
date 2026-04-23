@@ -27,7 +27,7 @@ public class TaskService {
     private final JwtUtil jwtUtil;
     private final TaskUpdateConverter taskUpdateConverter;
 
-    public TaskDTO saveTask(String token, TaskDTO taskDTO) {
+    public TaskDTO createTask(String token, TaskDTO taskDTO) {
         taskDTO.setUserEmail(jwtUtil.extractUsername(token.substring(7)));
         taskDTO.setCreationDateTime(Instant.now());
         taskDTO.setNotificationStatusEnum(NotificationStatusEnum.PENDING);
@@ -54,7 +54,7 @@ public class TaskService {
         return taskConverter.toTaskDTOList(taskRepository.findByUserEmail(jwtUtil.extractUsername(token.substring(7))));
     }
 
-    public void deleteTaskById(String id) {
+    public void deleteTask(String id) {
         if (taskRepository.existsById(id)) {
             taskRepository.deleteById(id);
             log.info("Task {} deleted", id);
@@ -63,7 +63,7 @@ public class TaskService {
         }
     }
 
-    public TaskDTO modifyTaskStatusById (NotificationStatusEnum notificationStatusEnum, String id) {
+    public TaskDTO updateTaskStatus(NotificationStatusEnum notificationStatusEnum, String id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         task.setNotificationStatusEnum(notificationStatusEnum);
         task.setModificationDateTime(Instant.now());
@@ -74,7 +74,7 @@ public class TaskService {
         return taskConverter.toTaskDTO(updatedTask);
     }
 
-    public TaskDTO updateTaskById (TaskDTO taskDTO, String id) {
+    public TaskDTO updateTask(TaskDTO taskDTO, String id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
         taskUpdateConverter.updateTasks(taskDTO, task);

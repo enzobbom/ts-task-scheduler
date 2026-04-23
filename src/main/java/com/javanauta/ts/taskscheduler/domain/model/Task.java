@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,4 +25,37 @@ public class Task {
     private Instant modificationDateTime;
     private NotificationStatusEnum notificationStatusEnum;
     private String timeZoneId;
+
+    public Task(String name, String description, Instant scheduledDateTime, String userEmail, String timeZoneId) {
+        this.name = name;
+        this.description = description;
+        this.scheduledDateTime = scheduledDateTime;
+        this.userEmail = userEmail;
+        this.timeZoneId = timeZoneId;
+
+        initializeForCreation();
+    }
+
+    public void update() {
+        // ...
+
+        modificationDateTime = Instant.now();
+    }
+
+//    public void updateStatus(NotificationStatusEnum newStatus) {
+//        if (newStatus == notificationStatusEnum) { return; }
+//        notificationStatusEnum = newStatus;
+//        modificationDateTime = Instant.now();
+//    }
+
+    private void initializeForCreation() {
+        creationDateTime = Instant.now();
+        notificationStatusEnum = NotificationStatusEnum.PENDING;
+    }
+
+    private void validateScheduledDate() {
+        if (scheduledDateTime.isBefore(Instant.now())) {
+            throw new IllegalArgumentException("Scheduled date and time must be in the future.");
+        }
+    }
 }
