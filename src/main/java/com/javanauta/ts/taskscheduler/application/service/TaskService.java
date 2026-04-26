@@ -44,12 +44,12 @@ public class TaskService {
         return savedTask;
     }
 
-    public List<Task> findTaskByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
+    public List<Task> findTasksByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
         validateTimePeriod(initialDateTime, finalDateTime);
         return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
     }
 
-    public List<Task> findTaskByUserEmail(String token) {
+    public List<Task> findTasksByUserEmail(String token) {
         String userEmail = jwtUtil.extractUsername(token.substring(7));
         return taskRepository.findByUserEmail(userEmail);
     }

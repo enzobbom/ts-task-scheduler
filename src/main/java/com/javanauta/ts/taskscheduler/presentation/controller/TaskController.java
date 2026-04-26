@@ -30,14 +30,14 @@ public class TaskController {
     }
 
     @GetMapping("/events")
-    public ResponseEntity<List<TaskDTO>> findTaskListByPeriod(@RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime, @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant finalDateTime) {
-        List<Task> tasks = taskService.findTaskByTimePeriod(initialDateTime, finalDateTime);
+    public ResponseEntity<List<TaskDTO>> findTasksByPeriod(@RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime, @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant finalDateTime) {
+        List<Task> tasks = taskService.findTasksByTimePeriod(initialDateTime, finalDateTime);
         return ResponseEntity.ok(taskMapper.toTaskDTOList(tasks));
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> findTaskListByUserEmail(@RequestHeader("Authorization") String token) {
-        List<Task> tasks = taskService.findTaskByUserEmail(token);
+    public ResponseEntity<List<TaskDTO>> findTasksByUserEmail(@RequestHeader("Authorization") String token) {
+        List<Task> tasks = taskService.findTasksByUserEmail(token);
         return ResponseEntity.ok(taskMapper.toTaskDTOList(tasks));
     }
 
