@@ -37,7 +37,8 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<TaskDTO>> findTaskListByUserEmail(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(taskService.findTaskByUserEmail(token));
+        List<Task> tasks = taskService.findTaskByUserEmail(token);
+        return ResponseEntity.ok(taskMapper.toTaskDTOList(tasks));
     }
 
     @DeleteMapping

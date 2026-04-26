@@ -49,9 +49,9 @@ public class TaskService {
         return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
     }
 
-    public List<TaskDTO> findTaskByUserEmail(String token) {
-        // Assumes the user exists as it's being extracted from the token
-        return taskConverter.toTaskDTOList(taskRepository.findByUserEmail(jwtUtil.extractUsername(token.substring(7))));
+    public List<Task> findTaskByUserEmail(String token) {
+        String userEmail = jwtUtil.extractUsername(token.substring(7));
+        return taskRepository.findByUserEmail(userEmail);
     }
 
     public void deleteTask(String id) {
