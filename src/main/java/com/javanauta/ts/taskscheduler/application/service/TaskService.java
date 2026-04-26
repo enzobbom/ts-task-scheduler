@@ -1,5 +1,6 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
+import com.javanauta.ts.taskscheduler.application.command.CreateTaskCommand;
 import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskConverter;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskUpdateConverter;
@@ -27,22 +28,20 @@ public class TaskService {
     private final JwtUtil jwtUtil;
     private final TaskUpdateConverter taskUpdateConverter;
 
-    public TaskDTO createTask(String token, TaskDTO taskDTO) {
-        taskDTO.setUserEmail(jwtUtil.extractUsername(token.substring(7)));
-        taskDTO.setCreationDateTime(Instant.now());
-        taskDTO.setNotificationStatusEnum(NotificationStatusEnum.PENDING);
-        validateTimeZoneId(taskDTO.getTimeZoneId());
+    public Task createTask(String token, CreateTaskCommand createTaskCommand) {
+        String userEmail = jwtUtil.extractUsername(token.substring(7));
 
-        Task savedTask = taskRepository.save(taskConverter.toTask(taskDTO));
+        Task task = Task.create(
+                createTaskCommand.name(),
+                createTaskCommand.description(),
+                createTaskCommand.scheduledDateTime(),
+                userEmail,
+                createTaskCommand.timeZoneId());
+
+        Task savedTask = taskRepository.save(task);
         log.info("Task {} created", savedTask.getId());
 
-        return taskConverter.toTaskDTO(savedTask);
-    }
-
-    private void validateTimeZoneId(String timeZoneId) {
-        if (!ZoneId.getAvailableZoneIds().contains(timeZoneId)) {
-            throw new ValidationErrorException("Invalid time zone ID");
-        }
+        return savedTask;
     }
 
     public List<TaskDTO> findTaskByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
@@ -78,7 +77,6 @@ public class TaskService {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
         taskUpdateConverter.updateTasks(taskDTO, task);
-        validateTimeZoneId(task.getTimeZoneId());
         task.setModificationDateTime(Instant.now());
 
         Task updatedTask = taskRepository.save(task);

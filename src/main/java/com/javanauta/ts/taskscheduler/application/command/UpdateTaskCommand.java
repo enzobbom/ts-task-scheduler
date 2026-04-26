@@ -1,7 +1,6 @@
 package com.javanauta.ts.taskscheduler.application.command;
 
 import com.javanauta.ts.taskscheduler.domain.exception.ValidationErrorException;
-import jakarta.validation.Validation;
 import lombok.Builder;
 
 import java.time.Instant;

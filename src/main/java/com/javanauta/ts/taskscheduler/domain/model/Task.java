@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.time.ZoneId;
 
 @Getter
 @Setter
@@ -24,16 +25,19 @@ public class Task {
     private String userEmail;
     private Instant modificationDateTime;
     private NotificationStatusEnum notificationStatusEnum;
-    private String timeZoneId;
+    private ZoneId timeZoneId;
 
-    public Task(String name, String description, Instant scheduledDateTime, String userEmail, String timeZoneId) {
+    private Task(String name, String description, Instant scheduledDateTime, String userEmail, ZoneId timeZoneId) {
         this.name = name;
         this.description = description;
         this.scheduledDateTime = scheduledDateTime;
         this.userEmail = userEmail;
         this.timeZoneId = timeZoneId;
 
-        initializeForCreation();
+        creationDateTime = Instant.now();
+        notificationStatusEnum = NotificationStatusEnum.PENDING;
+
+        validateScheduledDate();
     }
 
     public void update() {
@@ -48,14 +52,19 @@ public class Task {
 //        modificationDateTime = Instant.now();
 //    }
 
-    private void initializeForCreation() {
-        creationDateTime = Instant.now();
-        notificationStatusEnum = NotificationStatusEnum.PENDING;
-    }
-
     private void validateScheduledDate() {
         if (scheduledDateTime.isBefore(Instant.now())) {
             throw new IllegalArgumentException("Scheduled date and time must be in the future.");
         }
+    }
+
+    public static Task create(
+            String name,
+            String description,
+            Instant scheduledDateTime,
+            String userEmail,
+            ZoneId timeZoneId) {
+
+        return new Task(name, description, scheduledDateTime, userEmail, timeZoneId);
     }
 }

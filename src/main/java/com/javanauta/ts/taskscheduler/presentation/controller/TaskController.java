@@ -1,8 +1,12 @@
 package com.javanauta.ts.taskscheduler.presentation.controller;
 
 import com.javanauta.ts.taskscheduler.application.service.TaskService;
-import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
+import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
+import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
+import com.javanauta.ts.taskscheduler.presentation.mapper.TaskMapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +21,16 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+    private final TaskMapper taskMapper;
 
     @PostMapping
-    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDTO, @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(taskService.createTask(token, taskDTO));
+    public ResponseEntity<TaskDTO> createTask(@RequestBody CreateTaskRequestDTO createTaskRequestDTO, @RequestHeader("Authorization") String token) {
+        Task createdTask = taskService.createTask(token, taskMapper.fromCreateTaskRequestDTO(createTaskRequestDTO));
+        return ResponseEntity.ok(taskMapper.toTaskDTO(createdTask));
     }
 
     @GetMapping("/events")
-    public ResponseEntity<List<TaskDTO>> findTaskListByPeriod(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant finalDateTime) {
+    public ResponseEntity<List<TaskDTO>> findTaskListByPeriod(@RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime, @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant finalDateTime) {
         return ResponseEntity.ok(taskService.findTaskByTimePeriod(initialDateTime, finalDateTime));
     }
 
