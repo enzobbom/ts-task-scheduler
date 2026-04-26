@@ -44,8 +44,9 @@ public class TaskService {
         return savedTask;
     }
 
-    public List<TaskDTO> findTaskByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
-        return taskConverter.toTaskDTOList(taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime));
+    public List<Task> findTaskByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
+        validateTimePeriod(initialDateTime, finalDateTime);
+        return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
     }
 
     public List<TaskDTO> findTaskByUserEmail(String token) {
@@ -83,5 +84,13 @@ public class TaskService {
         log.info("Task {} updated", updatedTask.getId());
 
         return taskConverter.toTaskDTO(updatedTask);
+    }
+
+    // internal validation methods
+
+    private void validateTimePeriod(Instant initialDateTime, Instant finalDateTime) {
+        if (!initialDateTime.isBefore(finalDateTime)) {
+            throw new ValidationErrorException("Initial date time must be before final date time");
+        }
     }
 }

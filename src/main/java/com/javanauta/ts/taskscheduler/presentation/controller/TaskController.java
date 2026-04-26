@@ -31,7 +31,8 @@ public class TaskController {
 
     @GetMapping("/events")
     public ResponseEntity<List<TaskDTO>> findTaskListByPeriod(@RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime, @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant finalDateTime) {
-        return ResponseEntity.ok(taskService.findTaskByTimePeriod(initialDateTime, finalDateTime));
+        List<Task> tasks = taskService.findTaskByTimePeriod(initialDateTime, finalDateTime);
+        return ResponseEntity.ok(taskMapper.toTaskDTOList(tasks));
     }
 
     @GetMapping
