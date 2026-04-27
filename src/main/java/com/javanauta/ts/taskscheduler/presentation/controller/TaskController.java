@@ -28,7 +28,7 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(
-            @RequestBody CreateTaskRequestDTO createTaskRequestDTO,
+            @RequestBody @Valid CreateTaskRequestDTO createTaskRequestDTO,
             @RequestHeader("Authorization") String token) {
 
         Task createdTask = taskService.createTask(token, taskMapper.fromCreateTaskRequestDTO(createTaskRequestDTO));
@@ -71,7 +71,7 @@ public class TaskController {
 
     @PatchMapping
     public ResponseEntity<TaskDTO> updateTask(
-            @Valid @RequestBody UpdateTaskRequestDTO taskDTO,
+            @RequestBody @Valid UpdateTaskRequestDTO taskDTO,
             @RequestParam("id") @NotBlank String id) {
 
         Task task = taskService.updateTask(taskMapper.fromUpdateTaskRequestDTO(taskDTO), id);
