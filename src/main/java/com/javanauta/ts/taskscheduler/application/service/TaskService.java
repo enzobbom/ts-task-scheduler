@@ -13,6 +13,7 @@ import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -64,15 +65,14 @@ public class TaskService {
         }
     }
 
-    public TaskDTO updateTaskStatus(NotificationStatusEnum notificationStatusEnum, String id) {
+    @Transactional
+    public Task updateTaskStatus(NotificationStatusEnum notificationStatusEnum, String id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
-        task.setNotificationStatusEnum(notificationStatusEnum);
-        task.setModificationDateTime(Instant.now());
+        task.updateStatus(notificationStatusEnum);
 
-        Task updatedTask = taskRepository.save(task);
-        log.info("Status of task {} updated", updatedTask.getId());
+        log.info("Status of task {} updated", id);
 
-        return taskConverter.toTaskDTO(updatedTask);
+        return task;
     }
 
     public TaskDTO updateTask(TaskDTO taskDTO, String id) {

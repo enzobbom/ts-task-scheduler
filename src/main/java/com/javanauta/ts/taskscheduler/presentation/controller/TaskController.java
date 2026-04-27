@@ -49,8 +49,9 @@ public class TaskController {
     }
 
     @PatchMapping
-    public ResponseEntity<TaskDTO> updateTaskStatus(@RequestParam("status") NotificationStatusEnum notificationStatusEnum, @RequestParam("id") String id) {
-        return ResponseEntity.ok(taskService.updateTaskStatus(notificationStatusEnum, id));
+    public ResponseEntity<TaskDTO> updateTaskStatus(@RequestParam("status") @NotNull NotificationStatusEnum notificationStatusEnum, @RequestParam("id") @NotBlank String id) {
+        Task task = taskService.updateTaskStatus(notificationStatusEnum, id);
+        return ResponseEntity.ok(taskMapper.toTaskDTO(task));
     }
 
     @PutMapping

@@ -46,11 +46,11 @@ public class Task {
         modificationDateTime = Instant.now();
     }
 
-//    public void updateStatus(NotificationStatusEnum newStatus) {
-//        if (newStatus == notificationStatusEnum) { return; }
-//        notificationStatusEnum = newStatus;
-//        modificationDateTime = Instant.now();
-//    }
+    public void updateStatus(NotificationStatusEnum newStatus) {
+        if (newStatus == notificationStatusEnum) { return; }
+        notificationStatusEnum = newStatus;
+        modificationDateTime = Instant.now();
+    }
 
     private void validateScheduledDate() {
         if (scheduledDateTime.isBefore(Instant.now())) {
