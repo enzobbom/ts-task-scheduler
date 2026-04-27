@@ -2,8 +2,6 @@ package com.javanauta.ts.taskscheduler.application.service;
 
 import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
 import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
-import com.javanauta.ts.taskscheduler.application.mapper.TaskConverter;
-import com.javanauta.ts.taskscheduler.application.mapper.TaskUpdateConverter;
 import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
 import com.javanauta.ts.taskscheduler.domain.exception.ValidationErrorException;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
@@ -24,9 +22,7 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final TaskConverter taskConverter;
     private final JwtUtil jwtUtil;
-    private final TaskUpdateConverter taskUpdateConverter;
 
     private static final String TASK_NOT_FOUND_MSG = "Task not found";
 
