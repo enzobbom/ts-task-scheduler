@@ -2,7 +2,6 @@ package com.javanauta.ts.taskscheduler.presentation.mapper;
 
 import com.javanauta.ts.taskscheduler.application.command.CreateTaskCommand;
 import com.javanauta.ts.taskscheduler.application.command.UpdateTaskCommand;
-import com.javanauta.ts.taskscheduler.application.command.UpdateTaskStatusCommand;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
@@ -21,8 +20,6 @@ public interface TaskMapper {
 
     @Mapping(target = "timeZoneId", expression = "java(TaskMapper.convertTimeZoneId(dto.getTimeZoneId()))")
     UpdateTaskCommand fromUpdateTaskRequestDTO(UpdateTaskRequestDTO updateTaskRequestDTO);
-
-    UpdateTaskStatusCommand fromUpdateTaskStatusRequestDTO(UpdateTaskStatusCommand updateTaskStatusCommand);
 
     TaskDTO toTaskDTO(Task task);
     List<TaskDTO> toTaskDTOList(List<Task> taskList);
