@@ -1,6 +1,7 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
 import com.javanauta.ts.taskscheduler.application.command.CreateTaskCommand;
+import com.javanauta.ts.taskscheduler.application.command.UpdateTaskCommand;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskConverter;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskUpdateConverter;
 import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
@@ -71,20 +72,16 @@ public class TaskService {
         task.updateStatus(notificationStatusEnum);
 
         log.info("Status of task {} updated", id);
-
         return task;
     }
 
-    public TaskDTO updateTask(TaskDTO taskDTO, String id) {
+    @Transactional
+    public Task updateTask(UpdateTaskCommand command, String id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
+        task.update(command);
 
-        taskUpdateConverter.updateTasks(taskDTO, task);
-        task.setModificationDateTime(Instant.now());
-
-        Task updatedTask = taskRepository.save(task);
-        log.info("Task {} updated", updatedTask.getId());
-
-        return taskConverter.toTaskDTO(updatedTask);
+        log.info("Task {} updated", id);
+        return task;
     }
 
     // internal validation methods

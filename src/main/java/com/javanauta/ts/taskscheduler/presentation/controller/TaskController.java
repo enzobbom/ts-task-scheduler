@@ -5,7 +5,9 @@ import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
+import com.javanauta.ts.taskscheduler.presentation.dto.in.UpdateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.presentation.mapper.TaskMapper;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -48,14 +50,15 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping
+    @PatchMapping("/status")
     public ResponseEntity<TaskDTO> updateTaskStatus(@RequestParam("status") @NotNull NotificationStatusEnum notificationStatusEnum, @RequestParam("id") @NotBlank String id) {
         Task task = taskService.updateTaskStatus(notificationStatusEnum, id);
         return ResponseEntity.ok(taskMapper.toTaskDTO(task));
     }
 
-    @PutMapping
-    public ResponseEntity<TaskDTO> updateTask(@RequestBody TaskDTO taskDTO, @RequestParam("id") String id) {
-        return ResponseEntity.ok(taskService.updateTask(taskDTO, id));
+    @PatchMapping
+    public ResponseEntity<TaskDTO> updateTask(@Valid @RequestBody UpdateTaskRequestDTO taskDTO, @RequestParam("id") @NotBlank String id) {
+        Task task = taskService.updateTask(taskMapper.fromUpdateTaskRequestDTO(taskDTO), id);
+        return ResponseEntity.ok(taskMapper.toTaskDTO(task));
     }
 }

@@ -1,5 +1,6 @@
 package com.javanauta.ts.taskscheduler.domain.model;
 
+import com.javanauta.ts.taskscheduler.application.command.UpdateTaskCommand;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -40,9 +41,14 @@ public class Task {
         validateScheduledDate();
     }
 
-    public void update() {
-        // ...
-
+    public void update(UpdateTaskCommand command) {
+        if (command.name() != null) { name = command.name(); }
+        if (command.description() != null) { description = command.description(); }
+        if (command.scheduledDateTime() != null) {
+            scheduledDateTime = command.scheduledDateTime();
+            validateScheduledDate();
+        }
+        if (command.timeZoneId() != null) { timeZoneId = command.timeZoneId(); }
         modificationDateTime = Instant.now();
     }
 
