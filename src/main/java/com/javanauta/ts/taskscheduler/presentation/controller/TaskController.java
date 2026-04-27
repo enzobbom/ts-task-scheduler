@@ -6,6 +6,7 @@ import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.presentation.mapper.TaskMapper;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,7 +43,7 @@ public class TaskController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteTaskById(@RequestParam("id") String id){
+    public ResponseEntity<Void> deleteTask(@RequestParam("id") @NotBlank String id){
         taskService.deleteTask(id);
         return ResponseEntity.ok().build();
     }

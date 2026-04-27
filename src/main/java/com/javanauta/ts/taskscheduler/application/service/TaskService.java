@@ -1,21 +1,20 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
 import com.javanauta.ts.taskscheduler.application.command.CreateTaskCommand;
-import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskConverter;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskUpdateConverter;
+import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
+import com.javanauta.ts.taskscheduler.domain.exception.ValidationErrorException;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
-import com.javanauta.ts.taskscheduler.domain.exception.ValidationErrorException;
-import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
 import com.javanauta.ts.taskscheduler.infrastructure.security.JwtUtil;
+import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -27,6 +26,8 @@ public class TaskService {
     private final TaskConverter taskConverter;
     private final JwtUtil jwtUtil;
     private final TaskUpdateConverter taskUpdateConverter;
+
+    private static final String TASK_NOT_FOUND_MSG = "Task not found";
 
     public Task createTask(String token, CreateTaskCommand createTaskCommand) {
         String userEmail = jwtUtil.extractUsername(token.substring(7));
@@ -59,12 +60,12 @@ public class TaskService {
             taskRepository.deleteById(id);
             log.info("Task {} deleted", id);
         } else {
-            throw new ResourceNotFoundException("Task not found");
+            throw new ResourceNotFoundException(TASK_NOT_FOUND_MSG);
         }
     }
 
     public TaskDTO updateTaskStatus(NotificationStatusEnum notificationStatusEnum, String id) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
         task.setNotificationStatusEnum(notificationStatusEnum);
         task.setModificationDateTime(Instant.now());
 
@@ -75,7 +76,7 @@ public class TaskService {
     }
 
     public TaskDTO updateTask(TaskDTO taskDTO, String id) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
 
         taskUpdateConverter.updateTasks(taskDTO, task);
         task.setModificationDateTime(Instant.now());
