@@ -1,7 +1,7 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
-import com.javanauta.ts.taskscheduler.application.command.CreateTaskCommand;
-import com.javanauta.ts.taskscheduler.application.command.UpdateTaskCommand;
+import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
+import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskConverter;
 import com.javanauta.ts.taskscheduler.application.mapper.TaskUpdateConverter;
 import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
@@ -30,15 +30,10 @@ public class TaskService {
 
     private static final String TASK_NOT_FOUND_MSG = "Task not found";
 
-    public Task createTask(String token, CreateTaskCommand createTaskCommand) {
+    public Task createTask(String token, CreateTaskData createTaskData) {
         String userEmail = jwtUtil.extractUsername(token.substring(7));
 
-        Task task = Task.create(
-                createTaskCommand.name(),
-                createTaskCommand.description(),
-                createTaskCommand.scheduledDateTime(),
-                userEmail,
-                createTaskCommand.timeZoneId());
+        Task task = Task.create(createTaskData, userEmail);
 
         Task savedTask = taskRepository.save(task);
         log.info("Task {} created", savedTask.getId());
@@ -75,9 +70,9 @@ public class TaskService {
     }
 
     @Transactional
-    public Task updateTask(UpdateTaskCommand command, String id) {
+    public Task updateTask(UpdateTaskData updateTaskData, String id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
-        task.update(command);
+        task.update(updateTaskData);
 
         log.info("Task {} updated", id);
         return task;

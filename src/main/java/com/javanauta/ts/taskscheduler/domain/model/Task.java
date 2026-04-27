@@ -1,6 +1,7 @@
 package com.javanauta.ts.taskscheduler.domain.model;
 
-import com.javanauta.ts.taskscheduler.application.command.UpdateTaskCommand;
+import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
+import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -41,14 +42,13 @@ public class Task {
         validateScheduledDate();
     }
 
-    public static Task create(
-            String name,
-            String description,
-            Instant scheduledDateTime,
-            String userEmail,
-            ZoneId timeZoneId) {
-
-        return new Task(name, description, scheduledDateTime, userEmail, timeZoneId);
+    public static Task create(CreateTaskData createTaskData, String userEmail) {
+        return new Task(
+                createTaskData.name(),
+                createTaskData.description(),
+                createTaskData.scheduledDateTime(),
+                userEmail,
+                createTaskData.timeZoneId());
     }
 
     public void updateStatus(NotificationStatusEnum newStatus) {
@@ -57,14 +57,14 @@ public class Task {
         modificationDateTime = Instant.now();
     }
 
-    public void update(UpdateTaskCommand command) {
-        if (command.name() != null) { name = command.name(); }
-        if (command.description() != null) { description = command.description(); }
-        if (command.scheduledDateTime() != null) {
-            scheduledDateTime = command.scheduledDateTime();
+    public void update(UpdateTaskData updateTaskData) {
+        if (updateTaskData.name() != null) { name = updateTaskData.name(); }
+        if (updateTaskData.description() != null) { description = updateTaskData.description(); }
+        if (updateTaskData.scheduledDateTime() != null) {
+            scheduledDateTime = updateTaskData.scheduledDateTime();
             validateScheduledDate();
         }
-        if (command.timeZoneId() != null) { timeZoneId = command.timeZoneId(); }
+        if (updateTaskData.timeZoneId() != null) { timeZoneId = updateTaskData.timeZoneId(); }
         modificationDateTime = Instant.now();
     }
 

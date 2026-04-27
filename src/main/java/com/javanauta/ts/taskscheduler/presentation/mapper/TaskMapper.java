@@ -1,7 +1,7 @@
 package com.javanauta.ts.taskscheduler.presentation.mapper;
 
-import com.javanauta.ts.taskscheduler.application.command.CreateTaskCommand;
-import com.javanauta.ts.taskscheduler.application.command.UpdateTaskCommand;
+import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
+import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
@@ -16,10 +16,10 @@ import java.util.List;
 public interface TaskMapper {
 
     @Mapping(target = "timeZoneId", expression = "java(TaskMapper.convertTimeZoneId(dto.getTimeZoneId()))")
-    CreateTaskCommand fromCreateTaskRequestDTO(CreateTaskRequestDTO createTaskRequestDTO);
+    CreateTaskData fromCreateTaskRequestDTO(CreateTaskRequestDTO createTaskRequestDTO);
 
     @Mapping(target = "timeZoneId", expression = "java(TaskMapper.convertTimeZoneId(dto.getTimeZoneId()))")
-    UpdateTaskCommand fromUpdateTaskRequestDTO(UpdateTaskRequestDTO updateTaskRequestDTO);
+    UpdateTaskData fromUpdateTaskRequestDTO(UpdateTaskRequestDTO updateTaskRequestDTO);
 
     TaskDTO toTaskDTO(Task task);
     List<TaskDTO> toTaskDTOList(List<Task> taskList);
