@@ -27,37 +27,53 @@ public class TaskController {
     private final TaskMapper taskMapper;
 
     @PostMapping
-    public ResponseEntity<TaskDTO> createTask(@RequestBody CreateTaskRequestDTO createTaskRequestDTO, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<TaskDTO> createTask(
+            @RequestBody CreateTaskRequestDTO createTaskRequestDTO,
+            @RequestHeader("Authorization") String token) {
+
         Task createdTask = taskService.createTask(token, taskMapper.fromCreateTaskRequestDTO(createTaskRequestDTO));
         return ResponseEntity.ok(taskMapper.toTaskDTO(createdTask));
     }
 
     @GetMapping("/events")
-    public ResponseEntity<List<TaskDTO>> findTasksByPeriod(@RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime, @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant finalDateTime) {
+    public ResponseEntity<List<TaskDTO>> findTasksByPeriod(
+            @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime,
+            @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant finalDateTime) {
+
         List<Task> tasks = taskService.findTasksByTimePeriod(initialDateTime, finalDateTime);
         return ResponseEntity.ok(taskMapper.toTaskDTOList(tasks));
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> findTasksByUserEmail(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<TaskDTO>> findTasksByUserEmail(
+            @RequestHeader("Authorization") String token) {
+
         List<Task> tasks = taskService.findTasksByUserEmail(token);
         return ResponseEntity.ok(taskMapper.toTaskDTOList(tasks));
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteTask(@RequestParam("id") @NotBlank String id){
+    public ResponseEntity<Void> deleteTask(
+            @RequestParam("id") @NotBlank String id){
+
         taskService.deleteTask(id);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/status")
-    public ResponseEntity<TaskDTO> updateTaskStatus(@RequestParam("status") @NotNull NotificationStatusEnum notificationStatusEnum, @RequestParam("id") @NotBlank String id) {
+    public ResponseEntity<TaskDTO> updateTaskStatus(
+            @RequestParam("status") @NotNull NotificationStatusEnum notificationStatusEnum,
+            @RequestParam("id") @NotBlank String id) {
+
         Task task = taskService.updateTaskStatus(notificationStatusEnum, id);
         return ResponseEntity.ok(taskMapper.toTaskDTO(task));
     }
 
     @PatchMapping
-    public ResponseEntity<TaskDTO> updateTask(@Valid @RequestBody UpdateTaskRequestDTO taskDTO, @RequestParam("id") @NotBlank String id) {
+    public ResponseEntity<TaskDTO> updateTask(
+            @Valid @RequestBody UpdateTaskRequestDTO taskDTO,
+            @RequestParam("id") @NotBlank String id) {
+
         Task task = taskService.updateTask(taskMapper.fromUpdateTaskRequestDTO(taskDTO), id);
         return ResponseEntity.ok(taskMapper.toTaskDTO(task));
     }

@@ -10,7 +10,6 @@ import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
 import com.javanauta.ts.taskscheduler.infrastructure.security.JwtUtil;
-import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

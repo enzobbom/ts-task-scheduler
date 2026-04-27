@@ -41,6 +41,22 @@ public class Task {
         validateScheduledDate();
     }
 
+    public static Task create(
+            String name,
+            String description,
+            Instant scheduledDateTime,
+            String userEmail,
+            ZoneId timeZoneId) {
+
+        return new Task(name, description, scheduledDateTime, userEmail, timeZoneId);
+    }
+
+    public void updateStatus(NotificationStatusEnum newStatus) {
+        if (newStatus == notificationStatusEnum) { return; }
+        notificationStatusEnum = newStatus;
+        modificationDateTime = Instant.now();
+    }
+
     public void update(UpdateTaskCommand command) {
         if (command.name() != null) { name = command.name(); }
         if (command.description() != null) { description = command.description(); }
@@ -52,25 +68,9 @@ public class Task {
         modificationDateTime = Instant.now();
     }
 
-    public void updateStatus(NotificationStatusEnum newStatus) {
-        if (newStatus == notificationStatusEnum) { return; }
-        notificationStatusEnum = newStatus;
-        modificationDateTime = Instant.now();
-    }
-
     private void validateScheduledDate() {
         if (scheduledDateTime.isBefore(Instant.now())) {
-            throw new IllegalArgumentException("Scheduled date and time must be in the future.");
+            throw new IllegalArgumentException("Scheduled date and time must be in the future");
         }
-    }
-
-    public static Task create(
-            String name,
-            String description,
-            Instant scheduledDateTime,
-            String userEmail,
-            ZoneId timeZoneId) {
-
-        return new Task(name, description, scheduledDateTime, userEmail, timeZoneId);
     }
 }
