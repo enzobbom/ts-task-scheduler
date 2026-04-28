@@ -28,10 +28,9 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(
-            @RequestBody @Valid CreateTaskRequestDTO createTaskRequestDTO,
-            @RequestHeader("Authorization") String token) {
+            @RequestBody @Valid CreateTaskRequestDTO createTaskRequestDTO) {
 
-        Task createdTask = taskService.createTask(token, taskMapper.fromCreateTaskRequestDTO(createTaskRequestDTO));
+        Task createdTask = taskService.createTask(taskMapper.fromCreateTaskRequestDTO(createTaskRequestDTO));
         return ResponseEntity.ok(taskMapper.toTaskDTO(createdTask));
     }
 
@@ -45,10 +44,9 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> findTasksByUserEmail(
-            @RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<TaskDTO>> findTasksByUserEmail() {
 
-        List<Task> tasks = taskService.findTasksByUserEmail(token);
+        List<Task> tasks = taskService.findTasksByUserEmail();
         return ResponseEntity.ok(taskMapper.toTaskDTOList(tasks));
     }
 

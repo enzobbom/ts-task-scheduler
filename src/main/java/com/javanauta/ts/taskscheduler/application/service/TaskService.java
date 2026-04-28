@@ -25,7 +25,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final CurrentUserProvider currentUserProvider;
 
-    public Task createTask(String token, CreateTaskData createTaskData) {
+    public Task createTask(CreateTaskData createTaskData) {
         String userEmail = currentUserProvider.getEmail();
         Task task = Task.create(createTaskData, userEmail);
 
@@ -41,7 +41,7 @@ public class TaskService {
         return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
     }
 
-    public List<Task> findTasksByUserEmail(String token) {
+    public List<Task> findTasksByUserEmail() {
         return taskRepository.findByUserEmail(currentUserProvider.getEmail());
     }
 
