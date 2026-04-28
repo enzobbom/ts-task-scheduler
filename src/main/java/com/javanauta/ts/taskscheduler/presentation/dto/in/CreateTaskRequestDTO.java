@@ -1,5 +1,6 @@
 package com.javanauta.ts.taskscheduler.presentation.dto.in;
 
+import com.javanauta.ts.taskscheduler.presentation.validation.ValidZoneId;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -13,5 +14,5 @@ public record CreateTaskRequestDTO(
         @NotBlank String name,
         @NotNull String description,
         @NotNull Instant scheduledDateTime,
-        @NotBlank String timeZoneId) {
+        @NotBlank @ValidZoneId String timeZoneId) {
 }
