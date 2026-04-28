@@ -4,8 +4,7 @@ import com.javanauta.ts.taskscheduler.application.exception.ForbiddenException;
 import com.javanauta.ts.taskscheduler.application.exception.ResourceNotFoundException;
 import com.javanauta.ts.taskscheduler.application.exception.ServiceValidationException;
 import com.javanauta.ts.taskscheduler.application.ports.CurrentUserProvider;
-import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
-import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
+import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
@@ -25,9 +24,9 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final CurrentUserProvider currentUserProvider;
 
-    public Task createTask(CreateTaskData createTaskData) {
+    public Task createTask(TaskData taskData) {
         String userEmail = currentUserProvider.getEmail();
-        Task task = Task.create(createTaskData, userEmail);
+        Task task = Task.create(taskData, userEmail);
 
         Task savedTask = taskRepository.save(task);
         log.info("Task {} created", savedTask.getId());
@@ -64,10 +63,10 @@ public class TaskService {
     }
 
     @Transactional
-    public Task updateTask(UpdateTaskData updateTaskData, String id) {
+    public Task updateTask(TaskData taskData, String id) {
         Task task = getTaskOrThrow(id);
         validateTaskOwnership(task);
-        task.update(updateTaskData);
+        task.update(taskData);
 
         log.info("Task {} updated", id);
         return task;

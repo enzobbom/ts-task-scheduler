@@ -1,7 +1,6 @@
 package com.javanauta.ts.taskscheduler.domain.model;
 
-import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
-import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
+import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.exception.BusinessValidationException;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import lombok.*;
@@ -43,13 +42,13 @@ public class Task {
         validateScheduledDate();
     }
 
-    public static Task create(CreateTaskData createTaskData, String userEmail) {
+    public static Task create(TaskData taskData, String userEmail) {
         return new Task(
-                createTaskData.name(),
-                createTaskData.description(),
-                createTaskData.scheduledDateTime(),
+                taskData.name(),
+                taskData.description(),
+                taskData.scheduledDateTime(),
                 userEmail,
-                createTaskData.timeZoneId());
+                taskData.timeZoneId());
     }
 
     public void updateStatus(NotificationStatusEnum newStatus) {
@@ -58,14 +57,14 @@ public class Task {
         modificationDateTime = Instant.now();
     }
 
-    public void update(UpdateTaskData updateTaskData) {
-        if (updateTaskData.name() != null) { name = updateTaskData.name(); }
-        if (updateTaskData.description() != null) { description = updateTaskData.description(); }
-        if (updateTaskData.scheduledDateTime() != null) {
-            scheduledDateTime = updateTaskData.scheduledDateTime();
+    public void update(TaskData taskData) {
+        if (taskData.name() != null) { name = taskData.name(); }
+        if (taskData.description() != null) { description = taskData.description(); }
+        if (taskData.scheduledDateTime() != null) {
+            scheduledDateTime = taskData.scheduledDateTime();
             validateScheduledDate();
         }
-        if (updateTaskData.timeZoneId() != null) { timeZoneId = updateTaskData.timeZoneId(); }
+        if (taskData.timeZoneId() != null) { timeZoneId = taskData.timeZoneId(); }
         modificationDateTime = Instant.now();
     }
 

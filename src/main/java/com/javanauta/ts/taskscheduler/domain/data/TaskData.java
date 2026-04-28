@@ -6,10 +6,9 @@ import java.time.Instant;
 import java.time.ZoneId;
 
 @Builder
-public record CreateTaskData(
+public record TaskData(
         String name,
         String description,
         Instant scheduledDateTime,
-        String userEmail,
         ZoneId timeZoneId) {
 }
