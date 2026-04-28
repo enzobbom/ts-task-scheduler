@@ -1,15 +1,17 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
+import com.javanauta.ts.taskscheduler.application.ports.CurrentUserProvider;
 import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
 import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
-import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
 import com.javanauta.ts.taskscheduler.domain.exception.BusinessValidationException;
+import com.javanauta.ts.taskscheduler.domain.exception.ForbiddenException;
+import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
-import com.javanauta.ts.taskscheduler.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +24,10 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final JwtUtil jwtUtil;
-
-    private static final String TASK_NOT_FOUND_MSG = "Task not found";
+    private final CurrentUserProvider currentUserProvider;
 
     public Task createTask(String token, CreateTaskData createTaskData) {
-        String userEmail = jwtUtil.extractUsername(token.substring(7));
-
+        String userEmail = currentUserProvider.getEmail();
         Task task = Task.create(createTaskData, userEmail);
 
         Task savedTask = taskRepository.save(task);
@@ -38,27 +37,27 @@ public class TaskService {
     }
 
     public List<Task> findTasksByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
+        // End point to use internally. Will be refactored to be authenticated using M2M
         validateTimePeriod(initialDateTime, finalDateTime);
         return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
     }
 
     public List<Task> findTasksByUserEmail(String token) {
-        String userEmail = jwtUtil.extractUsername(token.substring(7));
-        return taskRepository.findByUserEmail(userEmail);
+        return taskRepository.findByUserEmail(currentUserProvider.getEmail());
     }
 
     public void deleteTask(String id) {
-        if (taskRepository.existsById(id)) {
-            taskRepository.deleteById(id);
-            log.info("Task {} deleted", id);
-        } else {
-            throw new ResourceNotFoundException(TASK_NOT_FOUND_MSG);
-        }
+        Task task = getTaskOrThrow(id);
+        validateTaskOwnership(task);
+        taskRepository.deleteById(id);
+
+        log.info("Task {} deleted", id);
     }
 
     @Transactional
     public Task updateTaskStatus(NotificationStatusEnum notificationStatusEnum, String id) {
         Task task = getTaskOrThrow(id);
+        validateTaskOwnership(task);
         task.updateStatus(notificationStatusEnum);
 
         log.info("Status of task {} updated", id);
@@ -68,6 +67,7 @@ public class TaskService {
     @Transactional
     public Task updateTask(UpdateTaskData updateTaskData, String id) {
         Task task = getTaskOrThrow(id);
+        validateTaskOwnership(task);
         task.update(updateTaskData);
 
         log.info("Task {} updated", id);
@@ -77,7 +77,13 @@ public class TaskService {
     // internal helper/validation methods
 
     private Task getTaskOrThrow(String id) {
-        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
+        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+    }
+
+    private void validateTaskOwnership(Task task) {
+        if (!task.getUserEmail().equals(currentUserProvider.getEmail())) {
+            throw new ForbiddenException("User not authenticated to perform this action");
+        }
     }
 
     private void validateTimePeriod(Instant initialDateTime, Instant finalDateTime) {
