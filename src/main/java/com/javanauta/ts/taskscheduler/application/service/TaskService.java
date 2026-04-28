@@ -58,7 +58,7 @@ public class TaskService {
 
     @Transactional
     public Task updateTaskStatus(NotificationStatusEnum notificationStatusEnum, String id) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
+        Task task = getTaskOrThrow(id);
         task.updateStatus(notificationStatusEnum);
 
         log.info("Status of task {} updated", id);
@@ -67,14 +67,18 @@ public class TaskService {
 
     @Transactional
     public Task updateTask(UpdateTaskData updateTaskData, String id) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
+        Task task = getTaskOrThrow(id);
         task.update(updateTaskData);
 
         log.info("Task {} updated", id);
         return task;
     }
 
-    // internal validation methods
+    // internal helper/validation methods
+
+    private Task getTaskOrThrow(String id) {
+        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(TASK_NOT_FOUND_MSG));
+    }
 
     private void validateTimePeriod(Instant initialDateTime, Instant finalDateTime) {
         if (!initialDateTime.isBefore(finalDateTime)) {
