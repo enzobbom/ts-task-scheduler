@@ -3,7 +3,7 @@ package com.javanauta.ts.taskscheduler.application.service;
 import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
 import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
 import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
-import com.javanauta.ts.taskscheduler.domain.exception.ValidationErrorException;
+import com.javanauta.ts.taskscheduler.domain.exception.BusinessValidationException;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
@@ -82,7 +82,7 @@ public class TaskService {
 
     private void validateTimePeriod(Instant initialDateTime, Instant finalDateTime) {
         if (!initialDateTime.isBefore(finalDateTime)) {
-            throw new ValidationErrorException("Initial date time must be before final date time");
+            throw new BusinessValidationException("Initial date time must be before final date time");
         }
     }
 }

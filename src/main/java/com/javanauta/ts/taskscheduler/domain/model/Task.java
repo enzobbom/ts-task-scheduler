@@ -2,7 +2,7 @@ package com.javanauta.ts.taskscheduler.domain.model;
 
 import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
 import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
-import com.javanauta.ts.taskscheduler.domain.exception.ValidationErrorException;
+import com.javanauta.ts.taskscheduler.domain.exception.BusinessValidationException;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -71,7 +71,7 @@ public class Task {
 
     private void validateScheduledDate() {
         if (scheduledDateTime.isBefore(Instant.now())) {
-            throw new ValidationErrorException("Scheduled date and time must be in the future");
+            throw new BusinessValidationException("Scheduled date and time must be in the future");
         }
     }
 }
