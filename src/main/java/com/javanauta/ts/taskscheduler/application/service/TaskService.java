@@ -1,17 +1,16 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
+import com.javanauta.ts.taskscheduler.application.exception.ForbiddenException;
+import com.javanauta.ts.taskscheduler.application.exception.ResourceNotFoundException;
+import com.javanauta.ts.taskscheduler.application.exception.ServiceValidationException;
 import com.javanauta.ts.taskscheduler.application.ports.CurrentUserProvider;
 import com.javanauta.ts.taskscheduler.domain.data.CreateTaskData;
 import com.javanauta.ts.taskscheduler.domain.data.UpdateTaskData;
-import com.javanauta.ts.taskscheduler.domain.exception.BusinessValidationException;
-import com.javanauta.ts.taskscheduler.domain.exception.ForbiddenException;
-import com.javanauta.ts.taskscheduler.domain.exception.ResourceNotFoundException;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,7 +87,7 @@ public class TaskService {
 
     private void validateTimePeriod(Instant initialDateTime, Instant finalDateTime) {
         if (!initialDateTime.isBefore(finalDateTime)) {
-            throw new BusinessValidationException("Initial date time must be before final date time");
+            throw new ServiceValidationException("Initial date time must be before final date time");
         }
     }
 }
