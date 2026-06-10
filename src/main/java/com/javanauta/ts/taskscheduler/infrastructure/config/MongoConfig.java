@@ -1,5 +1,7 @@
 package com.javanauta.ts.taskscheduler.infrastructure.config;
 
+import com.javanauta.ts.taskscheduler.infrastructure.persistence.converter.ZoneIdReadConverter;
+import com.javanauta.ts.taskscheduler.infrastructure.persistence.converter.ZoneIdWriteConverter;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -28,5 +33,15 @@ public class MongoConfig {
     @Bean
     public MongoTemplate mongoTemplate(MongoDatabaseFactory factory) {
         return new MongoTemplate(factory);
+    }
+
+    @Bean
+    public MongoCustomConversions mongoCustomConversions() {
+        return new MongoCustomConversions(
+                List.of(
+                        new ZoneIdReadConverter(),
+                        new ZoneIdWriteConverter()
+                )
+        );
     }
 }
