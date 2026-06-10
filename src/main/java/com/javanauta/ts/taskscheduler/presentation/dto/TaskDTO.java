@@ -1,21 +1,17 @@
-package com.javanauta.ts.taskscheduler.infrastructure.entity;
+package com.javanauta.ts.taskscheduler.presentation.dto;
 
-import com.javanauta.ts.taskscheduler.infrastructure.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
-@Setter
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@Document("task")
-public class Task {
+public class TaskDTO {
 
-    @Id
     private String id;
     private String name;
     private String description;
