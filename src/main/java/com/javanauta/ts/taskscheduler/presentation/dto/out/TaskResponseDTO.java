@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.presentation.dto;
+package com.javanauta.ts.taskscheduler.presentation.dto.out;
 
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
 import lombok.*;
@@ -10,7 +10,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskDTO {
+public class TaskResponseDTO {
 
     private String id;
     private String name;

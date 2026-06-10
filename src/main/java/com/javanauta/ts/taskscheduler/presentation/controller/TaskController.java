@@ -3,7 +3,7 @@ package com.javanauta.ts.taskscheduler.presentation.controller;
 import com.javanauta.ts.taskscheduler.application.service.TaskService;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
-import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
+import com.javanauta.ts.taskscheduler.presentation.dto.out.TaskResponseDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.UpdateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.presentation.mapper.TaskMapper;
@@ -30,7 +30,7 @@ public class TaskController {
     private final TaskMapper taskMapper;
 
     @PostMapping
-    public ResponseEntity<TaskDTO> createTask(
+    public ResponseEntity<TaskResponseDTO> createTask(
             @RequestBody @Valid CreateTaskRequestDTO createTaskRequestDTO) {
 
         Task createdTask = taskService.createTask(taskMapper.fromCreateTaskRequestDTO(createTaskRequestDTO));
@@ -39,7 +39,7 @@ public class TaskController {
 
     // To be removed (and used internally only)
     @GetMapping("/events")
-    public ResponseEntity<List<TaskDTO>> findTasksByPeriod(
+    public ResponseEntity<List<TaskResponseDTO>> findTasksByPeriod(
             @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime,
             @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant finalDateTime) {
 
@@ -48,7 +48,7 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> findTasksByUserEmail() {
+    public ResponseEntity<List<TaskResponseDTO>> findTasksByUserEmail() {
 
         List<Task> tasks = taskService.findTasksByUserEmail();
         return ResponseEntity.ok(taskMapper.toTaskDTOList(tasks));
@@ -64,7 +64,7 @@ public class TaskController {
 
     // To be removed (will be done internally once proper asynch communication with Notifier ms is implemented)
     @PatchMapping("/status")
-    public ResponseEntity<TaskDTO> updateTaskStatus(
+    public ResponseEntity<TaskResponseDTO> updateTaskStatus(
             @RequestParam("status") @NotNull NotificationStatusEnum notificationStatusEnum,
             @RequestParam("id") @NotBlank String id) {
 
@@ -73,7 +73,7 @@ public class TaskController {
     }
 
     @PatchMapping
-    public ResponseEntity<TaskDTO> updateTask(
+    public ResponseEntity<TaskResponseDTO> updateTask(
             @RequestBody @Valid UpdateTaskRequestDTO taskDTO,
             @RequestParam("id") @NotBlank String id) {
 
