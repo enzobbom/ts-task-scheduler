@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
                     .collect(Collectors.joining(", "));
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(details);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(details);
     }
 
     // Endpoint parameters validation (validation annotation at RequestParam and PathVariable)
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
                 .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
                 .toList();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.join(", ", details));
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(String.join(", ", details));
     }
 
     // Input validation exceptions: type mismatches and missing parameters
@@ -65,8 +65,7 @@ public class GlobalExceptionHandler {
     // Handles type mismatch errors, such as when a parameter cannot be converted to the expected type
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Invalid value for parameter: " + ex.getName());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid value for parameter: " + ex.getName());
     }
 
     // Handles JSON parsing errors, such as malformed JSON or type mismatches
@@ -95,14 +94,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ServiceValidationException.class)
     public ResponseEntity<String> handlerServiceValidationException(ServiceValidationException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(ex.getMessage());
     }
 
     // Domain exception
 
     @ExceptionHandler(BusinessValidationException.class)
     public ResponseEntity<String> handlerBusinessValidationException(BusinessValidationException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(ex.getMessage());
     }
 
     // Generic error handling
