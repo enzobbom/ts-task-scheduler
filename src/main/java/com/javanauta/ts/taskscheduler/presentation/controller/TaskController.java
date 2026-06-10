@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -21,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/task")
 @RequiredArgsConstructor
+@Validated
 public class TaskController {
 
     private final TaskService taskService;
@@ -34,6 +36,7 @@ public class TaskController {
         return ResponseEntity.ok(taskMapper.toTaskDTO(createdTask));
     }
 
+    // To be removed (and used internally only)
     @GetMapping("/events")
     public ResponseEntity<List<TaskDTO>> findTasksByPeriod(
             @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant initialDateTime,
@@ -58,6 +61,7 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
+    // To be removed (will be done internally once proper asynch communication with Notifier ms is implemented)
     @PatchMapping("/status")
     public ResponseEntity<TaskDTO> updateTaskStatus(
             @RequestParam("status") @NotNull NotificationStatusEnum notificationStatusEnum,
