@@ -6,7 +6,7 @@ import com.javanauta.ts.taskscheduler.application.exception.ServiceValidationExc
 import com.javanauta.ts.taskscheduler.application.ports.CurrentUserProvider;
 import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
-import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,10 +53,10 @@ public class TaskService {
     }
 
     @Transactional
-    public Task updateTaskStatus(NotificationStatusEnum notificationStatusEnum, String id) {
+    public Task updateTaskStatus(NotificationStatus notificationStatus, String id) {
         Task task = getTaskOrThrow(id);
         validateTaskOwnership(task);
-        task.updateStatus(notificationStatusEnum);
+        task.updateStatus(notificationStatus);
 
         log.info("Status of task {} updated", id);
         return task;

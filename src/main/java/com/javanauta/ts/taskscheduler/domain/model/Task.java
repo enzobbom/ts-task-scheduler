@@ -2,7 +2,7 @@ package com.javanauta.ts.taskscheduler.domain.model;
 
 import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.exception.BusinessValidationException;
-import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -26,7 +26,7 @@ public class Task {
     private Instant scheduledDateTime;
     private String userEmail;
     private Instant modificationDateTime;
-    private NotificationStatusEnum notificationStatusEnum;
+    private NotificationStatus notificationStatus;
     private ZoneId timeZoneId;
 
     private Task(String name, String description, Instant scheduledDateTime, String userEmail, ZoneId timeZoneId) {
@@ -37,7 +37,7 @@ public class Task {
         this.timeZoneId = timeZoneId;
 
         creationDateTime = Instant.now();
-        notificationStatusEnum = NotificationStatusEnum.PENDING;
+        notificationStatus = NotificationStatus.PENDING;
 
         validateScheduledDate();
     }
@@ -51,9 +51,9 @@ public class Task {
                 taskData.timeZoneId());
     }
 
-    public void updateStatus(NotificationStatusEnum newStatus) {
-        if (newStatus == notificationStatusEnum) { return; }
-        notificationStatusEnum = newStatus;
+    public void updateStatus(NotificationStatus newStatus) {
+        if (newStatus == notificationStatus) { return; }
+        notificationStatus = newStatus;
         modificationDateTime = Instant.now();
     }
 

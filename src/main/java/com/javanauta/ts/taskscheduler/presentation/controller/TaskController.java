@@ -2,7 +2,7 @@ package com.javanauta.ts.taskscheduler.presentation.controller;
 
 import com.javanauta.ts.taskscheduler.application.service.TaskService;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
-import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import com.javanauta.ts.taskscheduler.presentation.dto.out.TaskResponseDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.UpdateTaskRequestDTO;
@@ -65,10 +65,10 @@ public class TaskController {
     // To be removed (will be done internally once proper asynch communication with Notifier ms is implemented)
     @PatchMapping("/status")
     public ResponseEntity<TaskResponseDTO> updateTaskStatus(
-            @RequestParam("status") @NotNull NotificationStatusEnum notificationStatusEnum,
+            @RequestParam("status") @NotNull NotificationStatus notificationStatus,
             @RequestParam("id") @NotBlank String id) {
 
-        Task task = taskService.updateTaskStatus(notificationStatusEnum, id);
+        Task task = taskService.updateTaskStatus(notificationStatus, id);
         return ResponseEntity.ok(taskMapper.toTaskDTO(task));
     }
 

@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.presentation.dto.out;
 
-import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import lombok.*;
 
 import java.time.Instant;
@@ -19,6 +19,6 @@ public class TaskResponseDTO {
     private Instant scheduledDateTime;
     private String userEmail;
     private Instant modificationDateTime;
-    private NotificationStatusEnum notificationStatusEnum;
+    private NotificationStatus notificationStatus;
     private String timeZoneId;
 }
