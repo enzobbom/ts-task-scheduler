@@ -34,8 +34,8 @@ public class TaskService {
         return savedTask;
     }
 
+    // End point to use internally. Will be refactored to be authenticated using M2M
     public List<Task> findTasksByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
-        // End point to use internally. Will be refactored to be authenticated using M2M
         validateTimePeriod(initialDateTime, finalDateTime);
         return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
     }
