@@ -7,10 +7,17 @@ import java.util.List;
 @Getter
 public class ApplicationException extends RuntimeException {
 
-    private final List<ExceptionDetail> exceptionDetails;
+    private final ExceptionCode code;
+    private final String message;
+    private final List<FieldExceptionDetail> fieldExceptionDetails;
 
-    public ApplicationException(List<ExceptionDetail> exceptionDetails) {
-
-        this.exceptionDetails = List.copyOf(exceptionDetails);
+    public ApplicationException(ExceptionCode code, String message, List<FieldExceptionDetail> fieldExceptionsDetails) {
+        this.code = code;
+        this.message = message;
+        this.fieldExceptionDetails = List.copyOf(fieldExceptionsDetails);
     }
+
+    public ApplicationException(ExceptionCode code) {
+        this(code, code.getDefaultMessage(), null);
+    }}
 }

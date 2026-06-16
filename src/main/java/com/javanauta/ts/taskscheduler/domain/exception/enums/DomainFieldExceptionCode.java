@@ -1,13 +1,13 @@
 package com.javanauta.ts.taskscheduler.domain.exception.enums;
 
-import com.javanauta.ts.taskscheduler.shared.exception.ExceptionCode;
+import com.javanauta.ts.taskscheduler.shared.exception.FieldExceptionCode;
 
-public enum DomainExceptionCode implements ExceptionCode {
-    DOMAIN_VALIDATION_ERROR ("One or more fields failed domain business validation");
+public enum DomainFieldExceptionCode implements FieldExceptionCode {
+    SCHEDULED_DATETIME_IN_THE_PAST("Scheduled date/time must be in the future.");
 
     private final String defaultMessage;
 
-    DomainExceptionCode(String defaultMessage) {
+    DomainFieldExceptionCode(String defaultMessage) {
         this.defaultMessage = defaultMessage;
     }
 

@@ -4,7 +4,7 @@ import com.javanauta.ts.taskscheduler.shared.exception.ExceptionCode;
 
 public enum ServiceExceptionCode implements ExceptionCode {
     TASK_NOT_FOUND ("Task not found"),
-    NO_TASK_OWNERSHIP ("Task doesn't belong to the current user");
+    NO_TASK_OWNERSHIP ("The current user does not have permission to access or modify this task");
 
     private final String defaultMessage;
 
