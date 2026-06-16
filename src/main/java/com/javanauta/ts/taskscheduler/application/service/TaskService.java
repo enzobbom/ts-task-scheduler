@@ -1,13 +1,13 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
-import com.javanauta.ts.taskscheduler.application.exception.ForbiddenException;
-import com.javanauta.ts.taskscheduler.application.exception.ResourceNotFoundException;
 import com.javanauta.ts.taskscheduler.application.exception.ServiceValidationException;
+import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
 import com.javanauta.ts.taskscheduler.application.ports.CurrentUserProvider;
 import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
+import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -75,15 +75,17 @@ public class TaskService {
     // internal helper/validation methods
 
     private Task getTaskOrThrow(String id) {
-        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        return taskRepository.findById(id).orElseThrow(()
+                -> new ApplicationException(ServiceExceptionCode.TASK_NOT_FOUND));
     }
 
     private void validateTaskOwnership(Task task) {
         if (!task.getUserEmail().equals(currentUserProvider.getEmail())) {
-            throw new ForbiddenException("User not authenticated to perform this action");
+            throw new ApplicationException(ServiceExceptionCode.NO_TASK_OWNERSHIP);
         }
     }
 
+    // To be refactored and used internally only!!!
     private void validateTimePeriod(Instant initialDateTime, Instant finalDateTime) {
         if (!initialDateTime.isBefore(finalDateTime)) {
             throw new ServiceValidationException("Initial date time must be before final date time");
