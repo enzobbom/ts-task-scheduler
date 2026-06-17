@@ -13,7 +13,7 @@ public enum PresentationValidationExceptionCode implements FieldExceptionCode {
     }
 
     @Override
-    public String getCode() {
+    public String getIdentifier() {
         return name();
     }
 

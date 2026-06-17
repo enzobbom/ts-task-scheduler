@@ -12,7 +12,7 @@ public enum DomainFieldExceptionCode implements FieldExceptionCode {
     }
 
     @Override
-    public String getCode() {
+    public String getIdentifier() {
         return name();
     }
 

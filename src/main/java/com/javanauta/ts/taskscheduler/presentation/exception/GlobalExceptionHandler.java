@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
 
         ExceptionCode exceptionCode = PresentationValidationExceptionCode.REQUEST_BODY_VALIDATION_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
-        String errorCode = exceptionCode.getCode();
+        String errorIdentifier = exceptionCode.getIdentifier();
         ErrorResponse errorResponse;
 
         if (bindingResult.hasFieldErrors()) {
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
 
             errorResponse = new ErrorResponse(
                     httpCode,
-                    errorCode,
+                    errorIdentifier,
                     ex.getMessage(),
                     fieldErrors);
 
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
 
             errorResponse = new ErrorResponse(
                     httpCode,
-                    errorCode,
+                    errorIdentifier,
                     ex.getMessage(),
                     fieldErrors);
         }
@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
         ExceptionCode exceptionCode = PresentationValidationExceptionCode.REQUEST_PARAM_VALIDATION_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
-        String errorCode = exceptionCode.getCode();
+        String errorIdentifier = exceptionCode.getIdentifier();
 
         List<FieldErrorDetail> fieldErrors = ex.getConstraintViolations()
                 .stream()
@@ -105,7 +105,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
-                errorCode,
+                errorIdentifier,
                 ex.getMessage(),
                 fieldErrors);
 
@@ -119,12 +119,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         ExceptionCode exceptionCode = PresentationExceptionCode.TYPE_MISMATCH_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
-        String errorCode = exceptionCode.getCode();
+        String errorIdentifier = exceptionCode.getIdentifier();
         String message = "Invalid value for parameter: " + ex.getName();
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
-                errorCode,
+                errorIdentifier,
                 message,
                 List.of());
 
@@ -136,11 +136,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         ExceptionCode exceptionCode = PresentationExceptionCode.JSON_PARSE_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
-        String errorCode = exceptionCode.getCode();
+        String errorIdentifier = exceptionCode.getIdentifier();
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
-                errorCode,
+                errorIdentifier,
                 exceptionCode.getDefaultMessage(),
                 List.of());
 
@@ -152,12 +152,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         ExceptionCode exceptionCode = PresentationExceptionCode.MISSING_PARAMETER_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
-        String errorCode = exceptionCode.getCode();
+        String errorIdentifier = exceptionCode.getIdentifier();
         String message = "Missing required parameter: " + ex.getParameterName();
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
-                errorCode,
+                errorIdentifier,
                 message,
                 List.of());
 
@@ -180,7 +180,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
-                exceptionCode.getCode(),
+                exceptionCode.getIdentifier(),
                 ex.getMessage(),
                 fieldErrors);
 
@@ -194,11 +194,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handlerServiceValidationException(ServiceValidationException ex) {
         ExceptionCode exceptionCode = PresentationExceptionCode.INTERNAL_SERVER_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
-        String errorCode = exceptionCode.getCode();
+        String errorIdentifier = exceptionCode.getIdentifier();
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
-                errorCode,
+                errorIdentifier,
                 ex.getMessage(),
                 List.of());
 
@@ -213,11 +213,11 @@ public class GlobalExceptionHandler {
 
         ExceptionCode exceptionCode = PresentationExceptionCode.INTERNAL_SERVER_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
-        String errorCode = exceptionCode.getCode();
+        String errorIdentifier = exceptionCode.getIdentifier();
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
-                errorCode,
+                errorIdentifier,
                 exceptionCode.getDefaultMessage(),
                 List.of());
 

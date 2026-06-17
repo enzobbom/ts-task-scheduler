@@ -13,7 +13,7 @@ public enum ServiceExceptionCode implements ExceptionCode {
     }
 
     @Override
-    public String getCode() {
+    public String getIdentifier() {
         return name();
     }
 

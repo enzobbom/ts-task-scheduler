@@ -15,7 +15,7 @@ public enum PresentationExceptionCode implements ExceptionCode {
     }
 
     @Override
-    public String getCode() {
+    public String getIdentifier() {
         return name();
     }
 
