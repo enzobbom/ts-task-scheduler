@@ -9,8 +9,13 @@ public class SuccessResponse<T> extends Response {
 
     private final T data;
 
-    public SuccessResponse(HttpStatus statusCode, T data) {
-        super(ResponseStatus.SUCCESS, statusCode);
+    public SuccessResponse(HttpStatus code, T data) {
+        super(ResponseStatus.SUCCESS, code);
         this.data = data;
+    }
+
+    public SuccessResponse(HttpStatus code) {
+        super(ResponseStatus.SUCCESS, code);
+        this.data = null;
     }
 }
