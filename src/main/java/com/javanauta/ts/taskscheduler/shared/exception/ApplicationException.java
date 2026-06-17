@@ -13,7 +13,11 @@ public class ApplicationException extends RuntimeException {
 
     public ApplicationException(ExceptionCode code, String message, List<ValidationExceptionDetail> validationExceptionsDetails) {
         this.code = code;
-        this.message = message;
+        if (message == null || message.isBlank()) {
+            this.message = code.getDefaultMessage();
+        } else {
+            this.message = message;
+        }
         if (validationExceptionsDetails == null) {
             this.validationExceptionDetails = List.of();
         } else {
@@ -22,11 +26,11 @@ public class ApplicationException extends RuntimeException {
     }
 
     public ApplicationException(ExceptionCode code) {
-        this(code, code.getDefaultMessage(), null);
+        this(code, "", null);
     }
 
-    public ApplicationException(ExceptionCode code, List<ValidationExceptionDetail> fieldExceptionsDetails) {
-        this(code, code.getDefaultMessage(), fieldExceptionsDetails);
+    public ApplicationException(ExceptionCode code, List<ValidationExceptionDetail> validationExceptionsDetails) {
+        this(code, "", validationExceptionsDetails);
     }
 
     public ApplicationException(ExceptionCode code, String message) {
