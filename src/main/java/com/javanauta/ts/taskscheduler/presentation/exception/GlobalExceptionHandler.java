@@ -6,7 +6,7 @@ import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainExceptionCode
 import com.javanauta.ts.taskscheduler.presentation.exception.enums.PresentationExceptionCode;
 import com.javanauta.ts.taskscheduler.presentation.exception.enums.PresentationValidationExceptionCode;
 import com.javanauta.ts.taskscheduler.presentation.response.ErrorResponse;
-import com.javanauta.ts.taskscheduler.presentation.response.FieldErrorDetail;
+import com.javanauta.ts.taskscheduler.presentation.response.ValidationErrorDetail;
 import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import com.javanauta.ts.taskscheduler.shared.exception.ExceptionCode;
 import jakarta.validation.ConstraintViolationException;
@@ -56,9 +56,9 @@ public class GlobalExceptionHandler {
         if (bindingResult.hasFieldErrors()) {
             // Attribute validation
 
-            List<FieldErrorDetail> fieldErrors = ex.getFieldErrors()
+            List<ValidationErrorDetail> fieldErrors = ex.getFieldErrors()
                     .stream()
-                    .map(fieldError -> new FieldErrorDetail(
+                    .map(fieldError -> new ValidationErrorDetail(
                             fieldError.getField(),
                             fieldError.getDefaultMessage()))
                     .toList();
@@ -72,9 +72,9 @@ public class GlobalExceptionHandler {
         } else {
             // Object validation (e.g., class-level constraints)
 
-            List<FieldErrorDetail> fieldErrors = ex.getAllErrors()
+            List<ValidationErrorDetail> allErrors = ex.getAllErrors()
                     .stream()
-                    .map(fieldError -> new FieldErrorDetail(
+                    .map(fieldError -> new ValidationErrorDetail(
                             "class-level",
                             fieldError.getDefaultMessage()))
                     .toList();
@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
                     httpCode,
                     errorIdentifier,
                     ex.getMessage(),
-                    fieldErrors);
+                    allErrors);
         }
 
         return ResponseEntity.status(httpCode).body(errorResponse);
@@ -96,9 +96,9 @@ public class GlobalExceptionHandler {
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
         String errorIdentifier = exceptionCode.getIdentifier();
 
-        List<FieldErrorDetail> fieldErrors = ex.getConstraintViolations()
+        List<ValidationErrorDetail> constraintViolations = ex.getConstraintViolations()
                 .stream()
-                .map(fieldError -> new FieldErrorDetail(
+                .map(fieldError -> new ValidationErrorDetail(
                         fieldError.getPropertyPath().toString(),
                         fieldError.getMessage()))
                 .toList();
@@ -107,7 +107,7 @@ public class GlobalExceptionHandler {
                 httpCode,
                 errorIdentifier,
                 ex.getMessage(),
-                fieldErrors);
+                constraintViolations);
 
         return ResponseEntity.status(httpCode).body(errorResponse);
     }
@@ -171,18 +171,18 @@ public class GlobalExceptionHandler {
         ExceptionCode exceptionCode = ex.getCode();
         HttpStatus httpCode = BUSINESS_CODE_HTTP_STATUS_MAP.get(exceptionCode);
 
-        List<FieldErrorDetail> fieldErrors = ex.getFieldExceptionDetails()
+        List<ValidationErrorDetail> validationErrors = ex.getValidationExceptionDetails()
                 .stream()
-                .map(fieldException -> new FieldErrorDetail(
-                        fieldException.field(),
-                        fieldException.message()))
+                .map(validationException -> new ValidationErrorDetail(
+                        validationException.source(),
+                        validationException.message()))
                 .toList();
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
                 exceptionCode.getIdentifier(),
                 ex.getMessage(),
-                fieldErrors);
+                validationErrors);
 
         return ResponseEntity.status(httpCode).body(errorResponse);
     }

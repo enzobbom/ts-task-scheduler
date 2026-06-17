@@ -11,12 +11,12 @@ public class ErrorResponse extends Response {
 
     private final String errorCode;
     private final String message;
-    private final List<FieldErrorDetail> fieldErrors;
+    private final List<ValidationErrorDetail> fieldErrors;
 
-    public ErrorResponse(HttpStatus code, String errorCode, String message, List<FieldErrorDetail> fieldErrorDetails) {
+    public ErrorResponse(HttpStatus code, String errorCode, String message, List<ValidationErrorDetail> validationErrorDetails) {
         super(ResponseStatus.ERROR, code);
         this.errorCode = errorCode;
         this.message = message;
-        this.fieldErrors = fieldErrorDetails;
+        this.fieldErrors = validationErrorDetails;
     }
 }

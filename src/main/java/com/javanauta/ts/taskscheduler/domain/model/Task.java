@@ -2,10 +2,10 @@ package com.javanauta.ts.taskscheduler.domain.model;
 
 import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainExceptionCode;
-import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainFieldExceptionCode;
+import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainValidationExceptionCode;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
-import com.javanauta.ts.taskscheduler.shared.exception.FieldExceptionDetail;
+import com.javanauta.ts.taskscheduler.shared.exception.ValidationExceptionDetail;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -77,8 +77,8 @@ public class Task {
     private void validateScheduledDate() {
         if (scheduledDateTime.isBefore(Instant.now())) {
 
-            FieldExceptionDetail detail = new FieldExceptionDetail(
-                    DomainFieldExceptionCode.SCHEDULED_DATETIME_IN_THE_PAST, SCHEDULED_DATETIME_FIELD_NAME);
+            ValidationExceptionDetail detail = new ValidationExceptionDetail(
+                    DomainValidationExceptionCode.SCHEDULED_DATETIME_IN_THE_PAST, SCHEDULED_DATETIME_FIELD_NAME);
 
             throw new ApplicationException(
                     DomainExceptionCode.DOMAIN_VALIDATION_ERROR, List.of(detail));

@@ -1,13 +1,13 @@
 package com.javanauta.ts.taskscheduler.domain.exception.enums;
 
-import com.javanauta.ts.taskscheduler.shared.exception.FieldExceptionCode;
+import com.javanauta.ts.taskscheduler.shared.exception.ValidationExceptionCode;
 
-public enum DomainFieldExceptionCode implements FieldExceptionCode {
+public enum DomainValidationExceptionCode implements ValidationExceptionCode {
     SCHEDULED_DATETIME_IN_THE_PAST("Scheduled date/time must be in the future.");
 
     private final String defaultMessage;
 
-    DomainFieldExceptionCode(String defaultMessage) {
+    DomainValidationExceptionCode(String defaultMessage) {
         this.defaultMessage = defaultMessage;
     }
 

@@ -9,15 +9,15 @@ public class ApplicationException extends RuntimeException {
 
     private final ExceptionCode code;
     private final String message;
-    private final List<FieldExceptionDetail> fieldExceptionDetails;
+    private final List<ValidationExceptionDetail> validationExceptionDetails;
 
-    public ApplicationException(ExceptionCode code, String message, List<FieldExceptionDetail> fieldExceptionsDetails) {
+    public ApplicationException(ExceptionCode code, String message, List<ValidationExceptionDetail> validationExceptionsDetails) {
         this.code = code;
         this.message = message;
-        if (fieldExceptionsDetails == null) {
-            this.fieldExceptionDetails = List.of();
+        if (validationExceptionsDetails == null) {
+            this.validationExceptionDetails = List.of();
         } else {
-            this.fieldExceptionDetails = List.copyOf(fieldExceptionsDetails);
+            this.validationExceptionDetails = List.copyOf(validationExceptionsDetails);
         }
     }
 
@@ -25,7 +25,7 @@ public class ApplicationException extends RuntimeException {
         this(code, code.getDefaultMessage(), null);
     }
 
-    public ApplicationException(ExceptionCode code, List<FieldExceptionDetail> fieldExceptionsDetails) {
+    public ApplicationException(ExceptionCode code, List<ValidationExceptionDetail> fieldExceptionsDetails) {
         this(code, code.getDefaultMessage(), fieldExceptionsDetails);
     }
 
