@@ -12,11 +12,6 @@ public enum DomainFieldExceptionCode implements FieldExceptionCode {
     }
 
     @Override
-    public String getIdentifier() {
-        return name();
-    }
-
-    @Override
     public String getDefaultMessage() {
         return defaultMessage;
     }
