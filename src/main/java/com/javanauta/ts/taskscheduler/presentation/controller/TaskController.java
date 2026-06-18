@@ -73,15 +73,11 @@ public class TaskController {
     }
 
     @DeleteMapping
-    public ResponseEntity<SuccessResponse> deleteTask(
-            @RequestParam("id") @NotBlank String id){
+    public ResponseEntity<Void> deleteTask(
+            @RequestParam("id") @NotBlank String id) {
 
         taskService.deleteTask(id);
-
-        HttpStatus httpCode = HttpStatus.NO_CONTENT;
-        SuccessResponse successResponse = new SuccessResponse(httpCode);
-
-        return ResponseEntity.status(httpCode).body(successResponse);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // To be removed (will be done internally once proper asynch communication with Notifier ms is implemented)
