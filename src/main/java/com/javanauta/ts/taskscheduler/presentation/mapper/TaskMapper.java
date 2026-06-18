@@ -2,7 +2,7 @@ package com.javanauta.ts.taskscheduler.presentation.mapper;
 
 import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
-import com.javanauta.ts.taskscheduler.presentation.dto.TaskDTO;
+import com.javanauta.ts.taskscheduler.presentation.dto.out.TaskResponseDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.UpdateTaskRequestDTO;
 import org.mapstruct.Mapper;
@@ -22,9 +22,9 @@ public interface TaskMapper {
     TaskData fromUpdateTaskRequestDTO(UpdateTaskRequestDTO updateTaskRequestDTO);
 
     @Mapping(target = "timeZoneId", expression = "java(task.getTimeZoneId().getId())")
-    TaskDTO toTaskDTO(Task task);
+    TaskResponseDTO toTaskDTO(Task task);
 
-    List<TaskDTO> toTaskDTOList(List<Task> taskList);
+    List<TaskResponseDTO> toTaskDTOList(List<Task> taskList);
 
     static ZoneId convertStringToTimeZoneId(String timeZoneIdString) {
         return ZoneId.of(timeZoneIdString);

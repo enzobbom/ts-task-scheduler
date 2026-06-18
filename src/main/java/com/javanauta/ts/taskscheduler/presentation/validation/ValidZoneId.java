@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ValidZoneIdValidator.class)
 public @interface ValidZoneId {
-    String message() default "Invalid Time Zone ID";
+    String message() default "invalid Time Zone ID";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -1,14 +1,18 @@
 package com.javanauta.ts.taskscheduler.domain.model;
 
 import com.javanauta.ts.taskscheduler.domain.data.TaskData;
-import com.javanauta.ts.taskscheduler.domain.exception.BusinessValidationException;
-import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatusEnum;
+import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainExceptionCode;
+import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainValidationExceptionCode;
+import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
+import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
+import com.javanauta.ts.taskscheduler.shared.exception.ValidationExceptionDetail;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,8 +30,10 @@ public class Task {
     private Instant scheduledDateTime;
     private String userEmail;
     private Instant modificationDateTime;
-    private NotificationStatusEnum notificationStatusEnum;
+    private NotificationStatus notificationStatus;
     private ZoneId timeZoneId;
+
+    private final static String SCHEDULED_DATETIME_FIELD_NAME = "scheduledDateTime";
 
     private Task(String name, String description, Instant scheduledDateTime, String userEmail, ZoneId timeZoneId) {
         this.name = name;
@@ -37,7 +43,7 @@ public class Task {
         this.timeZoneId = timeZoneId;
 
         creationDateTime = Instant.now();
-        notificationStatusEnum = NotificationStatusEnum.PENDING;
+        notificationStatus = NotificationStatus.PENDING;
 
         validateScheduledDate();
     }
@@ -51,9 +57,9 @@ public class Task {
                 taskData.timeZoneId());
     }
 
-    public void updateStatus(NotificationStatusEnum newStatus) {
-        if (newStatus == notificationStatusEnum) { return; }
-        notificationStatusEnum = newStatus;
+    public void updateStatus(NotificationStatus newStatus) {
+        if (newStatus == notificationStatus) { return; }
+        notificationStatus = newStatus;
         modificationDateTime = Instant.now();
     }
 
@@ -70,7 +76,12 @@ public class Task {
 
     private void validateScheduledDate() {
         if (scheduledDateTime.isBefore(Instant.now())) {
-            throw new BusinessValidationException("Scheduled date and time must be in the future");
+
+            ValidationExceptionDetail detail = new ValidationExceptionDetail(
+                    DomainValidationExceptionCode.SCHEDULED_DATETIME_IN_THE_PAST, SCHEDULED_DATETIME_FIELD_NAME);
+
+            throw new ApplicationException(
+                    DomainExceptionCode.DOMAIN_VALIDATION_ERROR, List.of(detail));
         }
     }
 }
