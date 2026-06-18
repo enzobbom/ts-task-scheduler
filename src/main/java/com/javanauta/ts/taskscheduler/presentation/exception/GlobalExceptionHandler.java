@@ -4,11 +4,12 @@ import com.javanauta.ts.taskscheduler.application.exception.ServiceValidationExc
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
 import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainExceptionCode;
 import com.javanauta.ts.taskscheduler.presentation.exception.enums.PresentationExceptionCode;
-import com.javanauta.ts.taskscheduler.presentation.exception.enums.PresentationValidationExceptionCode;
 import com.javanauta.ts.taskscheduler.presentation.response.ErrorResponse;
 import com.javanauta.ts.taskscheduler.presentation.response.ValidationErrorDetail;
 import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import com.javanauta.ts.taskscheduler.shared.exception.ExceptionCode;
+import com.javanauta.ts.taskscheduler.shared.exception.enums.ValidationExceptionSourceType;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +36,8 @@ public class GlobalExceptionHandler {
             DomainExceptionCode.DOMAIN_VALIDATION_ERROR, HttpStatus.UNPROCESSABLE_CONTENT);
 
     private static final Map<ExceptionCode, HttpStatus> PRESENTATION_CODE_HTTP_STATUS_MAP = Map.of(
-            PresentationValidationExceptionCode.REQUEST_BODY_VALIDATION_ERROR, HttpStatus.UNPROCESSABLE_CONTENT,
-            PresentationValidationExceptionCode.REQUEST_PARAM_VALIDATION_ERROR, HttpStatus.UNPROCESSABLE_CONTENT,
+            PresentationExceptionCode.REQUEST_BODY_VIOLATION_ERROR, HttpStatus.UNPROCESSABLE_CONTENT,
+            PresentationExceptionCode.PARAM_OR_PATH_VAR_VIOLATION_ERROR, HttpStatus.UNPROCESSABLE_CONTENT,
             PresentationExceptionCode.TYPE_MISMATCH_ERROR, HttpStatus.BAD_REQUEST,
             PresentationExceptionCode.JSON_PARSE_ERROR, HttpStatus.BAD_REQUEST,
             PresentationExceptionCode.MISSING_PARAMETER_ERROR, HttpStatus.BAD_REQUEST,
@@ -45,46 +47,48 @@ public class GlobalExceptionHandler {
 
     // RequestBody DTO validations (annotated with @Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request) {
 
-        ExceptionCode exceptionCode = PresentationValidationExceptionCode.REQUEST_BODY_VALIDATION_ERROR;
+        ExceptionCode exceptionCode = PresentationExceptionCode.REQUEST_BODY_VIOLATION_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
         String errorIdentifier = exceptionCode.getIdentifier();
-        ErrorResponse errorResponse;
 
-        if (bindingResult.hasFieldErrors()) {
-            // Attribute validation
+        // Object-level validation errors
 
-            List<ValidationErrorDetail> fieldErrors = ex.getFieldErrors()
-                    .stream()
-                    .map(fieldError -> new ValidationErrorDetail(
-                            fieldError.getField(),
-                            fieldError.getDefaultMessage()))
-                    .toList();
+        String uri = request.getRequestURI();
+        String resourceName = uri.substring(uri.lastIndexOf("/") + 1);
 
-            errorResponse = new ErrorResponse(
-                    httpCode,
-                    errorIdentifier,
-                    ex.getMessage(),
-                    fieldErrors);
+        List<ValidationErrorDetail> objErrors = ex.getGlobalErrors()
+                .stream()
+                .map(objError -> new ValidationErrorDetail(
+                        ValidationExceptionSourceType.OBJECT.getIdentifier(),
+                        resourceName,
+                        objError.getDefaultMessage()))
+                .toList();
 
-        } else {
-            // Object validation (e.g., class-level constraints)
+        // Field validation errors
 
-            List<ValidationErrorDetail> allErrors = ex.getAllErrors()
-                    .stream()
-                    .map(fieldError -> new ValidationErrorDetail(
-                            "class-level",
-                            fieldError.getDefaultMessage()))
-                    .toList();
+        BindingResult bindingResult = ex.getBindingResult();
+        List<ValidationErrorDetail> fieldErrors = ex.getFieldErrors()
+                .stream()
+                .map(fieldError -> new ValidationErrorDetail(
+                        ValidationExceptionSourceType.FIELD.getIdentifier(),
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()))
+                .toList();
 
-            errorResponse = new ErrorResponse(
-                    httpCode,
-                    errorIdentifier,
-                    ex.getMessage(),
-                    allErrors);
-        }
+        // combine object-level and field-level validation errors
+        List<ValidationErrorDetail> allValidationErrors = new ArrayList<>();
+        allValidationErrors.addAll(objErrors);
+        allValidationErrors.addAll(fieldErrors);
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                httpCode,
+                errorIdentifier,
+                exceptionCode.getDefaultMessage(),
+                allValidationErrors);
 
         return ResponseEntity.status(httpCode).body(errorResponse);
     }
@@ -92,21 +96,22 @@ public class GlobalExceptionHandler {
     // Endpoint parameters validation (validation annotation at RequestParam and PathVariable)
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
-        ExceptionCode exceptionCode = PresentationValidationExceptionCode.REQUEST_PARAM_VALIDATION_ERROR;
+        PresentationExceptionCode exceptionCode = PresentationExceptionCode.PARAM_OR_PATH_VAR_VIOLATION_ERROR;
         HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
         String errorIdentifier = exceptionCode.getIdentifier();
 
         List<ValidationErrorDetail> constraintViolations = ex.getConstraintViolations()
                 .stream()
-                .map(fieldError -> new ValidationErrorDetail(
-                        fieldError.getPropertyPath().toString(),
-                        fieldError.getMessage()))
+                .map(paramError -> new ValidationErrorDetail(
+                        ValidationExceptionSourceType.PARAMETER.getIdentifier(),
+                        paramError.getPropertyPath().toString(),
+                        paramError.getMessage()))
                 .toList();
 
         ErrorResponse errorResponse = new ErrorResponse(
                 httpCode,
                 errorIdentifier,
-                ex.getMessage(),
+                exceptionCode.getDefaultMessage(),
                 constraintViolations);
 
         return ResponseEntity.status(httpCode).body(errorResponse);
@@ -174,6 +179,7 @@ public class GlobalExceptionHandler {
         List<ValidationErrorDetail> validationErrors = ex.getValidationExceptionDetails()
                 .stream()
                 .map(validationException -> new ValidationErrorDetail(
+                        validationException.code().getExceptionSourceType().getIdentifier(),
                         validationException.source(),
                         validationException.message()))
                 .toList();

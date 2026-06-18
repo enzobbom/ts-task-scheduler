@@ -3,7 +3,6 @@ package com.javanauta.ts.taskscheduler.presentation.controller;
 import com.javanauta.ts.taskscheduler.application.service.TaskService;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
-import com.javanauta.ts.taskscheduler.presentation.dto.out.TaskResponseDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.CreateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.presentation.dto.in.UpdateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.presentation.mapper.TaskMapper;

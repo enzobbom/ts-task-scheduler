@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = AtLeastOneFieldValidator.class)
 public @interface AtLeastOneField {
-    String message() default "At least one source must be provided";
+    String message() default "at least one field must be provided";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -1,10 +1,12 @@
 package com.javanauta.ts.taskscheduler.presentation.response;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.javanauta.ts.taskscheduler.presentation.response.enums.ResponseStatus;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
+@JsonPropertyOrder({"status", "code", "data"})
 public class SuccessResponse<T> extends Response {
 
     private final T data;

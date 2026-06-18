@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class Response {
     protected final ResponseStatus status;
-    protected final HttpStatus code;
+    protected final int code;
 
     public Response(ResponseStatus status, HttpStatus code) {
         this.status = status;
-        this.code = code;
+        this.code = code.value();
     }
 }
