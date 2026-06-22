@@ -23,6 +23,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+    mavenLocal()
 }
 
 ext {
@@ -40,6 +41,8 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.6.3'
     implementation 'org.mapstruct:mapstruct-processor:1.6.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation "org.springframework.boot:spring-boot-starter-amqp"
+    implementation "com.javanauta.ts:events:1.0.0"
 
 	compileOnly 'org.projectlombok:lombok'
 
