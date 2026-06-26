@@ -1,8 +1,11 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
-import com.javanauta.ts.taskscheduler.application.exception.ServiceValidationException;
+import com.javanauta.ts.events.notification.NotificationCompletedEvent;
+import com.javanauta.ts.events.notification.NotificationRequestedEvent;
+import com.javanauta.ts.events.notification.enums.NotificationResult;
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
 import com.javanauta.ts.taskscheduler.application.ports.CurrentUserProvider;
+import com.javanauta.ts.taskscheduler.application.ports.NotificationRequestPublisher;
 import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,9 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final CurrentUserProvider currentUserProvider;
+    private final NotificationRequestPublisher notificationRequestPublisher;
+
+    // Controller
 
     public Task createTask(TaskData taskData) {
         String userEmail = currentUserProvider.getEmail();
@@ -32,12 +39,6 @@ public class TaskService {
         log.info("Task {} created", savedTask.getId());
 
         return savedTask;
-    }
-
-    // End point to use internally. Will be refactored to be authenticated using M2M
-    public List<Task> findTasksByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
-        validateTimePeriod(initialDateTime, finalDateTime);
-        return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
     }
 
     public List<Task> findTasksByUserEmail() {
@@ -72,6 +73,50 @@ public class TaskService {
         return task;
     }
 
+    // Cron
+
+    public List<Task> findTasksByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
+        return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
+    }
+
+    public void requestTaskNotification(Task task) {
+        if (!task.canBeNotified()) {return;}
+
+        String taskId = task.getId();
+
+        NotificationRequestedEvent event = new NotificationRequestedEvent(
+                UUID.randomUUID(),
+                Instant.now(),
+                taskId,
+                task.getName(),
+                task.getDescription(),
+                task.getScheduledDateTime(),
+                task.getUserEmail(),
+                task.getTimeZoneId().toString());
+
+        notificationRequestPublisher.publishNotificationRequest(event);
+
+        task.updateStatus(NotificationStatus.DISPATCHED);
+        taskRepository.save(task);
+    }
+
+    // Messaging Broker
+
+    public void processTaskNotificationCompletion(NotificationCompletedEvent event) {
+        Task task = getTaskOrThrow(event.taskId());
+
+        NotificationResult result = event.result();
+
+        NotificationStatus taskStatus = switch (result) {
+            case SUCCESS -> NotificationStatus.NOTIFIED;
+            case RETRYABLE_FAILURE -> NotificationStatus.FAILED_RETRYABLE;
+            case PERMANENT_FAILURE -> NotificationStatus.FAILED;
+        };
+
+        task.updateStatus(taskStatus);
+        taskRepository.save(task);
+    }
+
     // internal helper/validation methods
 
     private Task getTaskOrThrow(String id) {
@@ -82,13 +127,6 @@ public class TaskService {
     private void validateTaskOwnership(Task task) {
         if (!task.getUserEmail().equals(currentUserProvider.getEmail())) {
             throw new ApplicationException(ServiceExceptionCode.NO_TASK_OWNERSHIP);
-        }
-    }
-
-    // To be refactored and used internally only!!!
-    private void validateTimePeriod(Instant initialDateTime, Instant finalDateTime) {
-        if (!initialDateTime.isBefore(finalDateTime)) {
-            throw new ServiceValidationException("Initial date time must be before final date time");
         }
     }
 }

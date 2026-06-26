@@ -74,6 +74,11 @@ public class Task {
         modificationDateTime = Instant.now();
     }
 
+    public boolean canBeNotified() {
+        return notificationStatus == NotificationStatus.PENDING
+                || notificationStatus == NotificationStatus.FAILED_RETRYABLE;
+    }
+
     private void validateScheduledDate() {
         if (scheduledDateTime.isBefore(Instant.now())) {
 
