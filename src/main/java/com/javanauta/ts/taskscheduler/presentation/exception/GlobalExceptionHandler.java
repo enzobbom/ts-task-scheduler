@@ -1,6 +1,5 @@
 package com.javanauta.ts.taskscheduler.presentation.exception;
 
-import com.javanauta.ts.taskscheduler.application.exception.ServiceValidationException;
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
 import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainExceptionCode;
 import com.javanauta.ts.taskscheduler.presentation.exception.enums.PresentationExceptionCode;
@@ -189,24 +188,6 @@ public class GlobalExceptionHandler {
                 exceptionCode.getIdentifier(),
                 ex.getMessage(),
                 validationErrors);
-
-        return ResponseEntity.status(httpCode).body(errorResponse);
-    }
-
-    // Service exceptions
-
-    // To be removed as it will be used internally only
-    @ExceptionHandler(ServiceValidationException.class)
-    public ResponseEntity<ErrorResponse> handlerServiceValidationException(ServiceValidationException ex) {
-        ExceptionCode exceptionCode = PresentationExceptionCode.INTERNAL_SERVER_ERROR;
-        HttpStatus httpCode = PRESENTATION_CODE_HTTP_STATUS_MAP.get(exceptionCode);
-        String errorIdentifier = exceptionCode.getIdentifier();
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                httpCode,
-                errorIdentifier,
-                ex.getMessage(),
-                List.of());
 
         return ResponseEntity.status(httpCode).body(errorResponse);
     }
