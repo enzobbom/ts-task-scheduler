@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.adapters.config;
+package com.javanauta.ts.taskscheduler.adapters.in.messaging.config;
 
 import com.javanauta.ts.events.messaging.Exchanges;
 import com.javanauta.ts.events.messaging.Queues;
@@ -7,13 +7,11 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitConfig {
+public class RabbitInConfig {
 
     @Bean
     public TopicExchange notificationExchange() {
@@ -34,10 +32,5 @@ public class RabbitConfig {
                 .bind(notificationCompletedQueue)
                 .to(notificationExchange)
                 .with(RoutingKeys.NOTIFICATION_COMPLETED);
-    }
-
-    @Bean
-    public MessageConverter messageConverter() {
-        return new JacksonJsonMessageConverter();
     }
 }

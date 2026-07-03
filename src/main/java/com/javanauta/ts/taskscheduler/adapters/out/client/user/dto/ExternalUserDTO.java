@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.adapters.out.client.dto;
+package com.javanauta.ts.taskscheduler.adapters.out.client.user.dto;
 
 import lombok.*;
 
@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ExternalUserDTO {
-
     private String email;
     private String password;
 }

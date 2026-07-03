@@ -1,12 +1,12 @@
 package com.javanauta.ts.taskscheduler.adapters.out.security;
 
-import com.javanauta.ts.taskscheduler.ports.out.security.CurrentUserProvider;
+import com.javanauta.ts.taskscheduler.ports.out.security.PrincipalProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SpringSecurityCurrentUserProvider implements CurrentUserProvider {
+public class SpringSecurityPrincipalProvider implements PrincipalProvider {
 
     @Override
     public String getEmail() {

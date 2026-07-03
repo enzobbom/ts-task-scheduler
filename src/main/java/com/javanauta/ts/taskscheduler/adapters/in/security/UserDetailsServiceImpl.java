@@ -1,21 +1,21 @@
 package com.javanauta.ts.taskscheduler.adapters.in.security;
 
-import com.javanauta.ts.taskscheduler.adapters.out.client.dto.ExternalUserDTO;
-import com.javanauta.ts.taskscheduler.adapters.out.client.UserClient;
+import com.javanauta.ts.taskscheduler.adapters.out.client.user.dto.ExternalUserDTO;
+import com.javanauta.ts.taskscheduler.ports.out.client.user.ExternalUserProvider;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class UserDetailsServiceImpl {
 
-    private final UserClient userClient;
+    private final ExternalUserProvider externalUserProvider;
 
-    public UserDetailsServiceImpl(UserClient userClient) {
-        this.userClient = userClient;
+    public UserDetailsServiceImpl(ExternalUserProvider externalUserProvider) {
+        this.externalUserProvider = externalUserProvider;
     }
 
     public UserDetails loadUserDetails(String email, String token) {
-        ExternalUserDTO externalUserDTO = userClient.getUserByEmail(email, token);
+        ExternalUserDTO externalUserDTO = externalUserProvider.getUserByEmail(email, token);
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(externalUserDTO.getEmail()) // Sets the username as the email

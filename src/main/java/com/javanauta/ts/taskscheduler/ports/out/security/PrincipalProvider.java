@@ -1,5 +1,5 @@
 package com.javanauta.ts.taskscheduler.ports.out.security;
 
-public interface CurrentUserProvider {
+public interface PrincipalProvider {
     String getEmail();
 }
