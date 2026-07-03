@@ -1,0 +1,56 @@
+package com.javanauta.ts.taskscheduler.adapters.in.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
+@Service
+public class JwtUtil {
+
+    private JwtParser jwtParser;
+
+    // Secret key used to sign and verify JWT tokens
+    @Value("${ts.jwt.secret}")
+    private String secretKey;
+
+    @PostConstruct
+    public void init() {
+        jwtParser = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                .build();
+    }
+
+    // Extracts claims from the JWT token
+    public Claims extractClaims(String token) {
+        return jwtParser
+                .parseSignedClaims(token) // Parses the JWT token and gets claims
+                .getPayload(); // Returns claims body
+    }
+
+    // Extracts username from the JWT token
+    public String extractUsername(String token) {
+        // Gets the subject (username) from the claims
+        return extractClaims(token).getSubject();
+    }
+
+    // Checks whether the JWT token is expired
+    public boolean isTokenExpired(String token) {
+        // Compares token expiration date with current date
+        return extractClaims(token).getExpiration().before(new Date());
+    }
+
+    // Validates the JWT token by checking username match and expiration
+    public boolean validateToken(String token, String username) {
+        // Extracts username from the token
+        final String extractedUsername = extractUsername(token);
+        // Checks if username matches and token is not expired
+        return (extractedUsername.equals(username) && !isTokenExpired(token));
+    }
+}
