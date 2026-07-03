@@ -1,8 +1,7 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
 import com.javanauta.ts.events.notification.NotificationCompletedEvent;
-import com.javanauta.ts.events.notification.NotificationRequestedEvent;
-import com.javanauta.ts.events.notification.enums.NotificationResult;
+import com.javanauta.ts.events.notification.NotificationRequestEvent;
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
 import com.javanauta.ts.taskscheduler.application.ports.CurrentUserProvider;
 import com.javanauta.ts.taskscheduler.application.ports.NotificationRequestPublisher;
@@ -84,7 +83,7 @@ public class TaskService {
 
         String taskId = task.getId();
 
-        NotificationRequestedEvent event = new NotificationRequestedEvent(
+        NotificationRequestEvent event = new NotificationRequestEvent(
                 UUID.randomUUID(),
                 Instant.now(),
                 taskId,
@@ -105,15 +104,7 @@ public class TaskService {
     public void processTaskNotificationCompletion(NotificationCompletedEvent event) {
         Task task = getTaskOrThrow(event.taskId());
 
-        NotificationResult result = event.result();
-
-        NotificationStatus taskStatus = switch (result) {
-            case SUCCESS -> NotificationStatus.NOTIFIED;
-            case RETRYABLE_FAILURE -> NotificationStatus.FAILED_RETRYABLE;
-            case PERMANENT_FAILURE -> NotificationStatus.FAILED;
-        };
-
-        task.updateStatus(taskStatus);
+        task.updateStatus(NotificationStatus.NOTIFIED);
         taskRepository.save(task);
     }
 

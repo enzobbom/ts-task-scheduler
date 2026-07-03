@@ -1,7 +1,7 @@
 package com.javanauta.ts.taskscheduler.application.ports;
 
-import com.javanauta.ts.events.notification.NotificationRequestedEvent;
+import com.javanauta.ts.events.notification.NotificationRequestEvent;
 
 public interface NotificationRequestPublisher {
-    void publishNotificationRequest(NotificationRequestedEvent event);
+    void publishNotificationRequest(NotificationRequestEvent event);
 }
