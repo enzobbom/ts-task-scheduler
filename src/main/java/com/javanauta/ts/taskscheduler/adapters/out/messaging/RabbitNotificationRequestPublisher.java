@@ -18,23 +18,10 @@ public class RabbitNotificationRequestPublisher implements NotificationRequestPu
 
     @Override
     public void publishNotificationRequest(NotificationRequestEvent event) {
-        String exchangeName = Exchanges.NOTIFICATION;
-        String routingKeyName = RoutingKeys.NOTIFICATION_REQUEST;
-
-        log.info(
-                "Publishing NoficationRequestEvent '{}' to exchange [{}] with routing key [{}] for Task '{}'",
-                event.eventId(),
-                exchangeName,
-                routingKeyName,
-                event.taskId()
-        );
-
         rabbitTemplate.convertAndSend(
-                exchangeName,
-                routingKeyName,
+                Exchanges.NOTIFICATION,
+                RoutingKeys.NOTIFICATION_REQUEST,
                 event
         );
-
-        log.info("Published successfully");
     }
 }

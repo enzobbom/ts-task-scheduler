@@ -53,4 +53,30 @@ public class RabbitInConfig {
                 .to(notificationExchange)
                 .with(RoutingKeys.NOTIFICATION_FAILED);
     }
+
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory connectionFactory,
+            MessageConverter messageConverter,
+            Advice retryAdvice) {
+
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+
+        factory.setConnectionFactory(connectionFactory);
+        factory.setMessageConverter(messageConverter);
+
+        factory.setAdviceChain(retryAdvice);
+
+        return factory;
+    }
+
+    @Bean
+    public Advice retryAdvice() {
+        return RetryInterceptorBuilder.stateless()
+                .configureRetryPolicy(builder -> builder
+                        .maxRetries(3)
+                        .excludes(AmqpRejectAndDontRequeueException.class))
+                .backOffOptions(60000, 1.0, 60000)
+                .build();
+    }
 }
