@@ -3,10 +3,16 @@ package com.javanauta.ts.taskscheduler.adapters.in.messaging.config;
 import com.javanauta.ts.events.messaging.Exchanges;
 import com.javanauta.ts.events.messaging.Queues;
 import com.javanauta.ts.events.messaging.RoutingKeys;
+import org.aopalliance.aop.Advice;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,5 +38,19 @@ public class RabbitInConfig {
                 .bind(notificationCompletedQueue)
                 .to(notificationExchange)
                 .with(RoutingKeys.NOTIFICATION_COMPLETED);
+    }
+
+    @Bean
+    public Queue notificationFailedQueue() { return new Queue(Queues.NOTIFICATION_FAILED); }
+
+    @Bean
+    public Binding notificationFailedBinding(
+            Queue notificationFailedQueue,
+            TopicExchange notificationExchange) {
+
+        return BindingBuilder
+                .bind(notificationFailedQueue)
+                .to(notificationExchange)
+                .with(RoutingKeys.NOTIFICATION_FAILED);
     }
 }

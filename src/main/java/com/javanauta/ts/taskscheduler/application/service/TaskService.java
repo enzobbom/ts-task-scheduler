@@ -1,6 +1,7 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
 import com.javanauta.ts.events.notification.NotificationCompletedEvent;
+import com.javanauta.ts.events.notification.NotificationFailedEvent;
 import com.javanauta.ts.events.notification.NotificationRequestEvent;
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
 import com.javanauta.ts.taskscheduler.ports.out.persistence.TaskPersister;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.Notification;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -53,16 +55,6 @@ public class TaskService {
     }
 
     @Transactional
-    public Task updateTaskStatus(NotificationStatus notificationStatus, String id) {
-        Task task = getTaskOrThrow(id);
-        validateTaskOwnership(task);
-        task.updateStatus(notificationStatus);
-
-        log.info("Status of task {} updated", id);
-        return task;
-    }
-
-    @Transactional
     public Task updateTask(TaskData taskData, String id) {
         Task task = getTaskOrThrow(id);
         validateTaskOwnership(task);
@@ -72,21 +64,21 @@ public class TaskService {
         return task;
     }
 
-    // Cron
+    // Scheduler
 
     public List<Task> findTasksByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
         return taskPersister.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
     }
 
     public void requestTaskNotification(Task task) {
-        if (!task.canBeNotified()) {return;}
-
-        String taskId = task.getId();
+        if (!task.canBeNotified()) {
+            return;
+        }
 
         NotificationRequestEvent event = new NotificationRequestEvent(
                 UUID.randomUUID(),
                 Instant.now(),
-                taskId,
+                task.getId(),
                 task.getName(),
                 task.getDescription(),
                 task.getScheduledDateTime(),
@@ -94,19 +86,31 @@ public class TaskService {
                 task.getTimeZoneId().toString());
 
         notificationRequestPublisher.publishNotificationRequest(event);
+        updateTaskStatus(task, NotificationStatus.DISPATCHED);
 
-        task.updateStatus(NotificationStatus.DISPATCHED);
-        taskPersister.save(task);
+        log.info("Notification request for Task '{}' was successfully dispatched", task.getId());
     }
 
     // Messaging Broker
 
     public void processTaskNotificationCompletion(NotificationCompletedEvent event) {
         Task task = getTaskOrThrow(event.taskId());
+        updateTaskStatus(task, NotificationStatus.NOTIFIED);
 
-        task.updateStatus(NotificationStatus.NOTIFIED);
-        taskPersister.save(task);
+        log.info("Notification for Task '{}' was successfully completed", event.taskId());
     }
+
+    public void processTaskNotificationFailure(NotificationFailedEvent event) {
+        log.info("Notification for Task '{}' failed ({})", event.taskId(), event.failureType().name().toLowerCase());
+        Task task = getTaskOrThrow(event.taskId());
+
+        NotificationStatus newStatus = switch (event.failureType()) {
+            case TEMPORARY -> NotificationStatus.PENDING_RETRY;
+            case PERMANENT -> NotificationStatus.FAILED;
+        };
+
+        updateTaskStatus(task, newStatus);
+        }
 
     // internal helper/validation methods
 
@@ -119,5 +123,12 @@ public class TaskService {
         if (!task.getUserEmail().equals(principalProvider.getEmail())) {
             throw new ApplicationException(ServiceExceptionCode.NO_TASK_OWNERSHIP);
         }
+    }
+
+    private void updateTaskStatus(Task task, NotificationStatus status) {
+        task.updateStatus(status);
+        taskPersister.save(task);
+
+        log.info("Status of task {} updated to {}", task.getId(), status);
     }
 }
