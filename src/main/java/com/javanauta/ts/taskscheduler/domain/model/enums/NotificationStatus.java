@@ -4,6 +4,6 @@ public enum NotificationStatus {
     PENDING,
     DISPATCHED,
     NOTIFIED,
-    FAILED_RETRYABLE,
+    PENDING_RETRY,
     FAILED
 }
