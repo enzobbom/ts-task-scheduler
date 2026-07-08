@@ -75,9 +75,7 @@ public class TaskService {
             return;
         }
 
-        NotificationRequestEvent event = new NotificationRequestEvent(
-                UUID.randomUUID(),
-                Instant.now(),
+        NotificationRequestEvent event = NotificationRequestEvent.create(
                 task.getId(),
                 task.getName(),
                 task.getDescription(),
@@ -110,7 +108,7 @@ public class TaskService {
         };
 
         updateTaskStatus(task, newStatus);
-        }
+    }
 
     // internal helper/validation methods
 
