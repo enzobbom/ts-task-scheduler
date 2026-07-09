@@ -3,6 +3,7 @@ package com.javanauta.ts.taskscheduler.adapters.out.messaging;
 import com.javanauta.ts.events.messaging.Exchanges;
 import com.javanauta.ts.events.messaging.RoutingKeys;
 import com.javanauta.ts.events.notification.NotificationRequestEvent;
+import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.ports.out.messaging.NotificationRequestPublisher;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,15 @@ public class RabbitNotificationRequestPublisher implements NotificationRequestPu
     private final RabbitTemplate rabbitTemplate;
 
     @Override
-    public void publishNotificationRequest(NotificationRequestEvent event) {
+    public void publishNotificationRequest(Task task) {
+        NotificationRequestEvent event = NotificationRequestEvent.create(
+                task.getId(),
+                task.getName(),
+                task.getDescription(),
+                task.getScheduledDateTime(),
+                task.getUserEmail(),
+                task.getTimeZoneId().toString());
+
         rabbitTemplate.convertAndSend(
                 Exchanges.NOTIFICATION,
                 RoutingKeys.NOTIFICATION_REQUEST,

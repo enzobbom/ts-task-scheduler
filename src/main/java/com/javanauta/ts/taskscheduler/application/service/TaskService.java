@@ -1,25 +1,22 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
-import com.javanauta.ts.events.notification.NotificationCompletedEvent;
-import com.javanauta.ts.events.notification.NotificationFailedEvent;
-import com.javanauta.ts.events.notification.NotificationRequestEvent;
+import com.javanauta.ts.taskscheduler.application.data.NotificationResultDetails;
+import com.javanauta.ts.taskscheduler.application.data.enums.NotificationResult;
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
-import com.javanauta.ts.taskscheduler.ports.out.persistence.TaskPersister;
-import com.javanauta.ts.taskscheduler.ports.out.security.PrincipalProvider;
-import com.javanauta.ts.taskscheduler.ports.out.messaging.NotificationRequestPublisher;
 import com.javanauta.ts.taskscheduler.domain.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
+import com.javanauta.ts.taskscheduler.ports.out.messaging.NotificationRequestPublisher;
+import com.javanauta.ts.taskscheduler.ports.out.persistence.TaskPersister;
+import com.javanauta.ts.taskscheduler.ports.out.security.PrincipalProvider;
 import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.management.Notification;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -75,15 +72,7 @@ public class TaskService {
             return;
         }
 
-        NotificationRequestEvent event = NotificationRequestEvent.create(
-                task.getId(),
-                task.getName(),
-                task.getDescription(),
-                task.getScheduledDateTime(),
-                task.getUserEmail(),
-                task.getTimeZoneId().toString());
-
-        notificationRequestPublisher.publishNotificationRequest(event);
+        notificationRequestPublisher.publishNotificationRequest(task);
         updateTaskStatus(task, NotificationStatus.DISPATCHED);
 
         log.info("Notification request for Task '{}' was successfully dispatched", task.getId());
@@ -91,20 +80,25 @@ public class TaskService {
 
     // Messaging Broker
 
-    public void processTaskNotificationCompletion(NotificationCompletedEvent event) {
-        Task task = getTaskOrThrow(event.taskId());
+    public void processTaskNotificationCompletion(NotificationResultDetails resultDetails) {
+        String taskId = resultDetails.taskId();
+        Task task = getTaskOrThrow(taskId);
         updateTaskStatus(task, NotificationStatus.NOTIFIED);
 
-        log.info("Notification for Task '{}' was successfully completed", event.taskId());
+        log.info("Notification for Task '{}' was successfully completed", taskId);
     }
 
-    public void processTaskNotificationFailure(NotificationFailedEvent event) {
-        log.info("Notification for Task '{}' failed ({})", event.taskId(), event.failureType().name().toLowerCase());
-        Task task = getTaskOrThrow(event.taskId());
+    public void processTaskNotificationFailure(NotificationResultDetails resultDetails) {
+        NotificationResult notificationResult = resultDetails.notificationResult();
+        String taskId = resultDetails.taskId();
 
-        NotificationStatus newStatus = switch (event.failureType()) {
-            case TEMPORARY -> NotificationStatus.PENDING_RETRY;
-            case PERMANENT -> NotificationStatus.FAILED;
+        log.info("Notification for Task '{}' failed ({})", taskId, notificationResult.name().toLowerCase());
+        Task task = getTaskOrThrow(taskId);
+
+        NotificationStatus newStatus = switch (notificationResult) {
+            case TEMPORARY_FAILURE -> NotificationStatus.PENDING_RETRY;
+            case PERMANENT_FAILURE -> NotificationStatus.FAILED;
+            default -> throw new IllegalArgumentException("Only 'FAILURE' results are expected here");
         };
 
         updateTaskStatus(task, newStatus);

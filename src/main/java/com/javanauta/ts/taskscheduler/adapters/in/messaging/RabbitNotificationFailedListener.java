@@ -2,6 +2,8 @@ package com.javanauta.ts.taskscheduler.adapters.in.messaging;
 
 import com.javanauta.ts.events.messaging.Queues;
 import com.javanauta.ts.events.notification.NotificationFailedEvent;
+import com.javanauta.ts.taskscheduler.application.data.NotificationResultDetails;
+import com.javanauta.ts.taskscheduler.application.data.enums.NotificationResult;
 import com.javanauta.ts.taskscheduler.application.service.TaskService;
 import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +21,19 @@ public class RabbitNotificationFailedListener {
 
     @RabbitListener(queues = Queues.NOTIFICATION_FAILED)
     public void handleNotificationFailed(NotificationFailedEvent event) {
+
+        NotificationResult result = switch (event.failureType()) {
+            case PERMANENT -> NotificationResult.PERMANENT_FAILURE;
+            case TEMPORARY -> NotificationResult.TEMPORARY_FAILURE;
+        };
+
+        NotificationResultDetails resultDetails = new NotificationResultDetails(
+                event.taskId(),
+                result,
+                event.error());
+
         try {
-            taskService.processTaskNotificationFailure(event);
+            taskService.processTaskNotificationFailure(resultDetails);
         } catch (ApplicationException ex) {
             // No retryable exceptions. If any exception is thrown, is probably database related and could be recovered
             throw new AmqpRejectAndDontRequeueException(ex);
