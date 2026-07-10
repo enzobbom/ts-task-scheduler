@@ -1,7 +1,7 @@
 package com.javanauta.ts.taskscheduler.adapters.in.messaging;
 
-import com.javanauta.ts.events.messaging.Queues;
 import com.javanauta.ts.events.notification.NotificationCompletedEvent;
+import com.javanauta.ts.events.notification.messaging.Queues;
 import com.javanauta.ts.taskscheduler.adapters.in.messaging.validation.NotificationEventValidator;
 import com.javanauta.ts.taskscheduler.application.data.NotificationResultDetails;
 import com.javanauta.ts.taskscheduler.application.data.enums.NotificationResult;

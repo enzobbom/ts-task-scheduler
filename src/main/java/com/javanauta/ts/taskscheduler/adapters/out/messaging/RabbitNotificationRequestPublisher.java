@@ -1,8 +1,8 @@
 package com.javanauta.ts.taskscheduler.adapters.out.messaging;
 
-import com.javanauta.ts.events.messaging.Exchanges;
-import com.javanauta.ts.events.messaging.RoutingKeys;
 import com.javanauta.ts.events.notification.NotificationRequestEvent;
+import com.javanauta.ts.events.notification.messaging.Exchanges;
+import com.javanauta.ts.events.notification.messaging.RoutingKeys;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.ports.out.messaging.NotificationRequestPublisher;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
 package com.javanauta.ts.taskscheduler.adapters.in.messaging.config;
 
-import com.javanauta.ts.events.messaging.Exchanges;
-import com.javanauta.ts.events.messaging.Queues;
-import com.javanauta.ts.events.messaging.RoutingKeys;
+import com.javanauta.ts.events.notification.messaging.Exchanges;
+import com.javanauta.ts.events.notification.messaging.Queues;
+import com.javanauta.ts.events.notification.messaging.RoutingKeys;
 import org.aopalliance.aop.Advice;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.core.Binding;

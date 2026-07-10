@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.adapters.in.messaging;
 
-import com.javanauta.ts.events.notification.Event;
+import com.javanauta.ts.events.notification.NotificationEvent;
 import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
@@ -32,9 +32,9 @@ public class NotificationEventRecoverer implements MessageRecoverer {
             return;
         }
 
-        Event event;
+        NotificationEvent event;
         try {
-            event = (Event) messageConverter.fromMessage(message);
+            event = (NotificationEvent) messageConverter.fromMessage(message);
         } catch (MessageConversionException e) {
             log.error("""
                     Attempt to deserialize Event within the Recoverer failed.
@@ -55,7 +55,7 @@ public class NotificationEventRecoverer implements MessageRecoverer {
 
             log.error("Validation of {} for Task {} has failed: {}",
                     event.getClass().getSimpleName(),
-                    "",
+                    event.taskId(),
                     String.join(", ", constraintMessages));
 
             return;
@@ -67,7 +67,7 @@ public class NotificationEventRecoverer implements MessageRecoverer {
         if (appException != null) {
             log.error("Processing of {} for Task {} has failed due to a business error  ({}): {}",
                     event.getClass().getSimpleName(),
-                    "",
+                    event.taskId(),
                     appException.getCode().getIdentifier(),
                     appException.getMessage());
             return;
@@ -76,7 +76,7 @@ public class NotificationEventRecoverer implements MessageRecoverer {
         // Any other unhandled exception
         log.error("Processing of {} for Task {} has failed due to an internal error",
                 event.getClass().getSimpleName(),
-                "",
+                event.taskId(),
                 cause);
     }
 
