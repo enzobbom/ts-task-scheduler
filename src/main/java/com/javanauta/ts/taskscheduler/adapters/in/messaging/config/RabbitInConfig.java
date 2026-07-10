@@ -3,6 +3,7 @@ package com.javanauta.ts.taskscheduler.adapters.in.messaging.config;
 import com.javanauta.ts.events.notification.messaging.Exchanges;
 import com.javanauta.ts.events.notification.messaging.Queues;
 import com.javanauta.ts.events.notification.messaging.RoutingKeys;
+import com.javanauta.ts.taskscheduler.adapters.in.messaging.NotificationEventRecoverer;
 import org.aopalliance.aop.Advice;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.core.Binding;
@@ -12,6 +13,7 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.support.converter.MessageConversionException;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -71,12 +73,15 @@ public class RabbitInConfig {
     }
 
     @Bean
-    public Advice retryAdvice() {
+    public Advice retryAdvice(NotificationEventRecoverer notificationEventRecoverer) {
         return RetryInterceptorBuilder.stateless()
                 .configureRetryPolicy(builder -> builder
                         .maxRetries(3)
-                        .excludes(AmqpRejectAndDontRequeueException.class))
+                        .excludes(
+                                MessageConversionException.class,
+                                AmqpRejectAndDontRequeueException.class))
                 .backOffOptions(60000, 1.0, 60000)
+                .recoverer(notificationEventRecoverer)
                 .build();
     }
 }

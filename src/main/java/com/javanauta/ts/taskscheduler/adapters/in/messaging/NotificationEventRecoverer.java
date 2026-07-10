@@ -65,7 +65,7 @@ public class NotificationEventRecoverer implements MessageRecoverer {
         String errorMsg;
         ApplicationException appException = findCause(cause, ApplicationException.class);
         if (appException != null) {
-            log.error("Processing of {} for Task {} has failed due to a business error  ({}): {}",
+            log.error("Processing of {} for Task {} has failed due to a business error ({}): {}",
                     event.getClass().getSimpleName(),
                     event.taskId(),
                     appException.getCode().getIdentifier(),
