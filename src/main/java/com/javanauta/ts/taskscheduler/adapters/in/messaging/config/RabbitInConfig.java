@@ -20,42 +20,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitInConfig {
-
-    @Bean
-    public TopicExchange notificationExchange() {
-        return new TopicExchange(Exchanges.NOTIFICATION);
-    }
-
-    @Bean
-    public Queue notificationCompletedQueue() {
-        return new Queue(Queues.NOTIFICATION_COMPLETED);
-    }
-
-    @Bean
-    public Binding notificationCompletedBinding(
-            Queue notificationCompletedQueue,
-            TopicExchange notificationExchange) {
-
-        return BindingBuilder
-                .bind(notificationCompletedQueue)
-                .to(notificationExchange)
-                .with(RoutingKeys.NOTIFICATION_COMPLETED);
-    }
-
-    @Bean
-    public Queue notificationFailedQueue() { return new Queue(Queues.NOTIFICATION_FAILED); }
-
-    @Bean
-    public Binding notificationFailedBinding(
-            Queue notificationFailedQueue,
-            TopicExchange notificationExchange) {
-
-        return BindingBuilder
-                .bind(notificationFailedQueue)
-                .to(notificationExchange)
-                .with(RoutingKeys.NOTIFICATION_FAILED);
-    }
-
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
             ConnectionFactory connectionFactory,
