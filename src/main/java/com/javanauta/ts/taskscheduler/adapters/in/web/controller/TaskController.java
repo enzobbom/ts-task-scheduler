@@ -1,5 +1,6 @@
 package com.javanauta.ts.taskscheduler.adapters.in.web.controller;
 
+import com.javanauta.ts.taskscheduler.adapters.in.web.path.ApiPaths;
 import com.javanauta.ts.taskscheduler.application.service.TaskService;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.in.CreateTaskRequestDTO;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping(ApiPaths.TASKS_V1)
 @RequiredArgsConstructor
 @Validated
 public class TaskController {
