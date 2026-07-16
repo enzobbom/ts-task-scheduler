@@ -22,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class TaskService {
-
     private final TaskPersister taskPersister;
     private final PrincipalProvider principalProvider;
     private final NotificationRequestPublisher notificationRequestPublisher;
@@ -63,14 +62,15 @@ public class TaskService {
 
     // Scheduler
 
-    public List<Task> findTasksByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
-        return taskPersister.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
+    public List<Task> findTasksToNotify(Instant initialDateTime, Instant finalDateTime) {
+        return taskPersister.findByNotificationStatusInAndScheduledDateTimeBetween(
+                NotificationStatus.notifiableStatuses(),
+                initialDateTime,
+                finalDateTime);
     }
 
     public void requestTaskNotification(Task task) {
-        if (!task.canBeNotified()) {
-            return;
-        }
+        if (!task.canBeNotified()) { return; }
 
         notificationRequestPublisher.publishNotificationRequest(task);
         updateTaskStatus(task, NotificationStatus.DISPATCHED);

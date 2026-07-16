@@ -1,11 +1,13 @@
 package com.javanauta.ts.taskscheduler.adapters.out.persistence;
 
 import com.javanauta.ts.taskscheduler.domain.model.Task;
+import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import com.javanauta.ts.taskscheduler.ports.out.persistence.TaskPersister;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +32,8 @@ public class TaskPersisterAdapter implements TaskPersister {
     }
 
     @Override
-    public List<Task> findByScheduledDateTimeBetween(Instant initialDateTime, Instant finalDateTime) {
-        return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
+    public List<Task> findByNotificationStatusInAndScheduledDateTimeBetween(Collection<NotificationStatus> statuses, Instant initialDateTime, Instant finalDateTime) {
+        return taskRepository.findByNotificationStatusInAndScheduledDateTimeBetween(statuses, initialDateTime, finalDateTime);
     }
 
     @Override

@@ -22,7 +22,7 @@ public class TaskNotificationTrigger {
         long notificationPeriod = 1L; // in hours - currently hard coded but meant to be task setting
 
         Instant nowTime = Instant.now();
-        List<Task> tasksList = taskService.findTasksByTimePeriod(nowTime, nowTime.plus(notificationPeriod, ChronoUnit.HOURS));
+        List<Task> tasksList = taskService.findTasksToNotify(nowTime, nowTime.plus(notificationPeriod, ChronoUnit.HOURS));
         tasksList.forEach(taskService::requestTaskNotification);
     }
 }

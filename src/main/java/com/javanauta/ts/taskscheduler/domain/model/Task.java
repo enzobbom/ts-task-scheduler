@@ -81,8 +81,7 @@ public class Task {
     }
 
     public boolean canBeNotified() {
-        return notificationStatus == NotificationStatus.PENDING
-                || notificationStatus == NotificationStatus.PENDING_RETRY;
+        return NotificationStatus.notifiableStatuses().contains(notificationStatus);
     }
 
     private void validateScheduledDate() {
