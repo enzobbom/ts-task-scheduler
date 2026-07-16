@@ -13,7 +13,6 @@ import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -50,7 +49,6 @@ public class TaskService {
         log.info("Task {} deleted", id);
     }
 
-    @Transactional
     public Task updateTask(TaskData taskData, String id) {
         Task task = getTaskOrThrow(id);
         validateTaskOwnership(task);
