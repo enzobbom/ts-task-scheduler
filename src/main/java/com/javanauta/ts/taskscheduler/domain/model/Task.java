@@ -8,6 +8,8 @@ import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import com.javanauta.ts.taskscheduler.shared.exception.ValidationExceptionDetail;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -20,14 +22,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Document("task")
+@CompoundIndex(
+        name = "notification_schedule_idx",
+        def = "{'notificationStatus': 1, 'scheduledDateTime': 1}"
+)
 public class Task {
-
     @Id
     private String id;
     private String name;
     private String description;
     private Instant creationDateTime;
     private Instant scheduledDateTime;
+    @Indexed
     private String userEmail;
     private Instant modificationDateTime;
     private NotificationStatus notificationStatus;
