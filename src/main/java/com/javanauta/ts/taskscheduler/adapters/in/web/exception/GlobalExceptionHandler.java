@@ -1,10 +1,10 @@
 package com.javanauta.ts.taskscheduler.adapters.in.web.exception;
 
+import com.javanauta.ts.apicontract.response.ValidationErrorDetail;
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
 import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainExceptionCode;
 import com.javanauta.ts.taskscheduler.adapters.in.web.exception.enums.PresentationExceptionCode;
-import com.javanauta.ts.taskscheduler.adapters.in.web.response.ErrorResponse;
-import com.javanauta.ts.taskscheduler.adapters.in.web.response.ValidationErrorDetail;
+import com.javanauta.ts.apicontract.response.ErrorResponse;
 import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import com.javanauta.ts.taskscheduler.shared.exception.ExceptionCode;
 import com.javanauta.ts.taskscheduler.shared.exception.enums.ValidationExceptionSourceType;
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
         allValidationErrors.addAll(fieldErrors);
 
         ErrorResponse errorResponse = new ErrorResponse(
-                httpCode,
+                httpCode.value(),
                 errorIdentifier,
                 exceptionCode.getDefaultMessage(),
                 allValidationErrors);
@@ -108,7 +108,7 @@ public class GlobalExceptionHandler {
                 .toList();
 
         ErrorResponse errorResponse = new ErrorResponse(
-                httpCode,
+                httpCode.value(),
                 errorIdentifier,
                 exceptionCode.getDefaultMessage(),
                 constraintViolations);
@@ -127,7 +127,7 @@ public class GlobalExceptionHandler {
         String message = "Invalid value for parameter: " + ex.getName();
 
         ErrorResponse errorResponse = new ErrorResponse(
-                httpCode,
+                httpCode.value(),
                 errorIdentifier,
                 message,
                 List.of());
@@ -143,7 +143,7 @@ public class GlobalExceptionHandler {
         String errorIdentifier = exceptionCode.getIdentifier();
 
         ErrorResponse errorResponse = new ErrorResponse(
-                httpCode,
+                httpCode.value(),
                 errorIdentifier,
                 exceptionCode.getDefaultMessage(),
                 List.of());
@@ -160,7 +160,7 @@ public class GlobalExceptionHandler {
         String message = "Missing required parameter: " + ex.getParameterName();
 
         ErrorResponse errorResponse = new ErrorResponse(
-                httpCode,
+                httpCode.value(),
                 errorIdentifier,
                 message,
                 List.of());
@@ -184,7 +184,7 @@ public class GlobalExceptionHandler {
                 .toList();
 
         ErrorResponse errorResponse = new ErrorResponse(
-                httpCode,
+                httpCode.value(),
                 exceptionCode.getIdentifier(),
                 ex.getMessage(),
                 validationErrors);
@@ -203,7 +203,7 @@ public class GlobalExceptionHandler {
         String errorIdentifier = exceptionCode.getIdentifier();
 
         ErrorResponse errorResponse = new ErrorResponse(
-                httpCode,
+                httpCode.value(),
                 errorIdentifier,
                 exceptionCode.getDefaultMessage(),
                 List.of());

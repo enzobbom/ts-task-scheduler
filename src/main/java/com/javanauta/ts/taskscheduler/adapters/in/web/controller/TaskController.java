@@ -6,7 +6,7 @@ import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.in.CreateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.in.UpdateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.adapters.in.web.mapper.TaskMapper;
-import com.javanauta.ts.taskscheduler.adapters.in.web.response.SuccessResponse;
+import com.javanauta.ts.apicontract.response.SuccessResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class TaskController {
 
         HttpStatus httpCode = HttpStatus.OK;
         SuccessResponse successResponse = new SuccessResponse(
-                httpCode,
+                httpCode.value(),
                 taskMapper.toTaskDTO(createdTask));
 
         return ResponseEntity.status(httpCode).body(successResponse);
@@ -46,7 +46,7 @@ public class TaskController {
 
         HttpStatus httpCode = HttpStatus.OK;
         SuccessResponse successResponse = new SuccessResponse(
-                httpCode,
+                httpCode.value(),
                 taskMapper.toTaskDTOList(tasks));
 
         return ResponseEntity.status(httpCode).body(successResponse);
@@ -69,7 +69,7 @@ public class TaskController {
 
         HttpStatus httpCode = HttpStatus.OK;
         SuccessResponse successResponse = new SuccessResponse(
-                httpCode,
+                httpCode.value(),
                 taskMapper.toTaskDTO(task));
 
         return ResponseEntity.status(httpCode).body(successResponse);
