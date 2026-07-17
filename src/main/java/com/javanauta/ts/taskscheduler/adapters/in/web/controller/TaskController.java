@@ -1,12 +1,12 @@
 package com.javanauta.ts.taskscheduler.adapters.in.web.controller;
 
-import com.javanauta.ts.taskscheduler.adapters.in.web.path.ApiPaths;
-import com.javanauta.ts.taskscheduler.application.service.TaskService;
-import com.javanauta.ts.taskscheduler.domain.model.Task;
+import com.javanauta.ts.apicontract.response.SuccessResponse;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.in.CreateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.in.UpdateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.adapters.in.web.mapper.TaskMapper;
-import com.javanauta.ts.apicontract.response.SuccessResponse;
+import com.javanauta.ts.taskscheduler.adapters.in.web.path.ApiPaths;
+import com.javanauta.ts.taskscheduler.application.service.TaskService;
+import com.javanauta.ts.taskscheduler.domain.model.Task;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class TaskController {
 
     @DeleteMapping
     public ResponseEntity<Void> deleteTask(
-            @RequestParam("id") @NotBlank String id) {
+            @PathVariable("/{id}") @NotBlank String id) {
 
         taskService.deleteTask(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -63,7 +63,7 @@ public class TaskController {
     @PatchMapping
     public ResponseEntity<SuccessResponse> updateTask(
             @RequestBody @Valid UpdateTaskRequestDTO taskDTO,
-            @RequestParam("id") @NotBlank String id) {
+            @PathVariable("/{id}") @NotBlank String id) {
 
         Task task = taskService.updateTask(taskMapper.fromUpdateTaskRequestDTO(taskDTO), id);
 
