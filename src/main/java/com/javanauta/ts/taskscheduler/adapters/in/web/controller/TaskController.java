@@ -52,18 +52,18 @@ public class TaskController {
         return ResponseEntity.status(httpCode).body(successResponse);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(
-            @PathVariable("/{id}") @NotBlank String id) {
+            @PathVariable @NotBlank String id) {
 
         taskService.deleteTask(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     public ResponseEntity<SuccessResponse> updateTask(
             @RequestBody @Valid UpdateTaskRequestDTO taskDTO,
-            @PathVariable("/{id}") @NotBlank String id) {
+            @PathVariable @NotBlank String id) {
 
         Task task = taskService.updateTask(taskMapper.fromUpdateTaskRequestDTO(taskDTO), id);
 
