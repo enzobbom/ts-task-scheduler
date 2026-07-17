@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.adapters.in.web.mapper;
 
-import com.javanauta.ts.taskscheduler.domain.data.TaskData;
+import com.javanauta.ts.taskscheduler.application.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.out.TaskResponseDTO;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.in.CreateTaskRequestDTO;

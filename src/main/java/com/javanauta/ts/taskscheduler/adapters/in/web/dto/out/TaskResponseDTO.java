@@ -1,24 +1,20 @@
 package com.javanauta.ts.taskscheduler.adapters.in.web.dto.out;
 
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
-import lombok.*;
+import lombok.Builder;
 
 import java.time.Instant;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class TaskResponseDTO {
-
-    private String id;
-    private String name;
-    private String description;
-    private Instant creationDateTime;
-    private Instant scheduledDateTime;
-    private String userEmail;
-    private Instant modificationDateTime;
-    private NotificationStatus notificationStatus;
-    private String timeZoneId;
+public record TaskResponseDTO(
+        String id,
+        String name,
+        String description,
+        Instant creationDateTime,
+        Instant scheduledDateTime,
+        String userEmail,
+        Instant modificationDateTime,
+        NotificationStatus notificationStatus,
+        String timeZoneId
+) {
 }

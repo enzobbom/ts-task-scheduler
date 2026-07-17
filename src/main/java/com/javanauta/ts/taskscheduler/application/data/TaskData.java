@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.domain.data;
+package com.javanauta.ts.taskscheduler.application.data;
 
 import lombok.Builder;
 

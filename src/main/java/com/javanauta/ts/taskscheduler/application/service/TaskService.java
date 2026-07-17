@@ -3,7 +3,7 @@ package com.javanauta.ts.taskscheduler.application.service;
 import com.javanauta.ts.taskscheduler.application.data.NotificationResultDetails;
 import com.javanauta.ts.taskscheduler.application.data.enums.NotificationResult;
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
-import com.javanauta.ts.taskscheduler.domain.data.TaskData;
+import com.javanauta.ts.taskscheduler.application.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import com.javanauta.ts.taskscheduler.ports.out.messaging.NotificationRequestPublisher;

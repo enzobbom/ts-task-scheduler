@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.domain.model;
 
-import com.javanauta.ts.taskscheduler.domain.data.TaskData;
+import com.javanauta.ts.taskscheduler.application.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainExceptionCode;
 import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainValidationExceptionCode;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
