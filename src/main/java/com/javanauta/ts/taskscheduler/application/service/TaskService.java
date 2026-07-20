@@ -53,9 +53,10 @@ public class TaskService {
         Task task = getTaskOrThrow(id);
         validateTaskOwnership(task);
         task.update(taskData);
+        Task updatedTask = taskPersister.save(task);
 
         log.info("Task {} updated", id);
-        return task;
+        return updatedTask;
     }
 
     // Scheduler
