@@ -12,7 +12,7 @@ import java.time.Instant;
 @Jacksonized
 public record CreateTaskRequestDTO(
         @NotBlank String name,
-        @NotNull String description,
+        String description,
         @NotNull Instant scheduledDateTime,
         @NotBlank @ValidZoneId String timeZoneId) {
 }

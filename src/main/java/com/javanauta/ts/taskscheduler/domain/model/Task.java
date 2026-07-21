@@ -71,7 +71,7 @@ public class Task {
 
     public void update(TaskData taskData) {
         if (taskData.name() != null) { name = taskData.name(); }
-        if (taskData.description() != null) { description = taskData.description(); }
+        if (taskData.description() != null) { description = taskData.description().isBlank() ? null : taskData.description(); }
         if (taskData.scheduledDateTime() != null) {
             scheduledDateTime = taskData.scheduledDateTime();
             validateScheduledDate();
