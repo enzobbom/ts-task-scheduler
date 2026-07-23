@@ -37,7 +37,7 @@ public class TaskService {
         return savedTask;
     }
 
-    public List<Task> findTasksByUserEmail() {
+    public List<Task> getTasks() {
         return taskPersister.findByUserEmail(principalProvider.getEmail());
     }
 

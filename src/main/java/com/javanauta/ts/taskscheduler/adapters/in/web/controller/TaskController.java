@@ -70,8 +70,8 @@ public class TaskController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<SuccessResponse<List<TaskResponseDTO>>> findTasksByUserEmail() {
-        List<Task> tasks = taskService.findTasksByUserEmail();
+    public ResponseEntity<SuccessResponse<List<TaskResponseDTO>>> getTasks() {
+        List<Task> tasks = taskService.getTasks();
 
         HttpStatus httpCode = HttpStatus.OK;
         SuccessResponse<List<TaskResponseDTO>> successResponse = new SuccessResponse<>(
@@ -103,7 +103,7 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     @Operation(
             summary = "Update task",
             description = """
