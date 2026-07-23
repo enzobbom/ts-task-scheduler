@@ -28,7 +28,6 @@ import java.util.Map;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-
     private static final Map<ExceptionCode, HttpStatus> BUSINESS_CODE_HTTP_STATUS_MAP = Map.of(
             ServiceExceptionCode.TASK_NOT_FOUND, HttpStatus.NOT_FOUND,
             ServiceExceptionCode.NO_TASK_OWNERSHIP, HttpStatus.FORBIDDEN,

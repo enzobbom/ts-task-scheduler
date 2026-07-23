@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    public static final String SECURITY_SCHEME = "bearerAuth";
 
     // JwtUtil and UserDetailsService instances injected by Spring
     private final JwtRequestFilter jwtRequestFilter;
@@ -45,6 +46,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated() // Requires authentication for all other requests
                 )
 
