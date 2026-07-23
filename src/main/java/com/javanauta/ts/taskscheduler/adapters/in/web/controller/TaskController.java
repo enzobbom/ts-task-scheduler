@@ -3,6 +3,7 @@ package com.javanauta.ts.taskscheduler.adapters.in.web.controller;
 import com.javanauta.ts.apicontract.response.SuccessResponse;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.in.CreateTaskRequestDTO;
 import com.javanauta.ts.taskscheduler.adapters.in.web.dto.in.UpdateTaskRequestDTO;
+import com.javanauta.ts.taskscheduler.adapters.in.web.dto.out.TaskResponseDTO;
 import com.javanauta.ts.taskscheduler.adapters.in.web.mapper.TaskMapper;
 import com.javanauta.ts.taskscheduler.adapters.in.web.path.ApiPaths;
 import com.javanauta.ts.taskscheduler.application.service.TaskService;
@@ -22,18 +23,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class TaskController {
-
     private final TaskService taskService;
     private final TaskMapper taskMapper;
 
     @PostMapping
-    public ResponseEntity<SuccessResponse> createTask(
+    public ResponseEntity<SuccessResponse<TaskResponseDTO>> createTask(
             @RequestBody @Valid CreateTaskRequestDTO createTaskRequestDTO) {
 
         Task createdTask = taskService.createTask(taskMapper.fromCreateTaskRequestDTO(createTaskRequestDTO));
 
         HttpStatus httpCode = HttpStatus.OK;
-        SuccessResponse successResponse = new SuccessResponse(
+        SuccessResponse<TaskResponseDTO> successResponse = new SuccessResponse<>(
                 httpCode.value(),
                 taskMapper.toTaskDTO(createdTask));
 
@@ -41,11 +41,11 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<SuccessResponse> findTasksByUserEmail() {
+    public ResponseEntity<SuccessResponse<List<TaskResponseDTO>>> findTasksByUserEmail() {
         List<Task> tasks = taskService.findTasksByUserEmail();
 
         HttpStatus httpCode = HttpStatus.OK;
-        SuccessResponse successResponse = new SuccessResponse(
+        SuccessResponse<List<TaskResponseDTO>> successResponse = new SuccessResponse<>(
                 httpCode.value(),
                 taskMapper.toTaskDTOList(tasks));
 
@@ -61,14 +61,14 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<SuccessResponse> updateTask(
+    public ResponseEntity<SuccessResponse<TaskResponseDTO>> updateTask(
             @RequestBody @Valid UpdateTaskRequestDTO taskDTO,
             @PathVariable @NotBlank String id) {
 
         Task task = taskService.updateTask(taskMapper.fromUpdateTaskRequestDTO(taskDTO), id);
 
         HttpStatus httpCode = HttpStatus.OK;
-        SuccessResponse successResponse = new SuccessResponse(
+        SuccessResponse<TaskResponseDTO> successResponse = new SuccessResponse<>(
                 httpCode.value(),
                 taskMapper.toTaskDTO(task));
 
