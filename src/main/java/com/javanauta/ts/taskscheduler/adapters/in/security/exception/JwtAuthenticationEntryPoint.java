@@ -1,7 +1,7 @@
-package com.javanauta.ts.taskscheduler.adapters.in.security;
+package com.javanauta.ts.taskscheduler.adapters.in.security.exception;
 
 import com.javanauta.ts.apicontract.response.ErrorResponse;
-import com.javanauta.ts.taskscheduler.adapters.in.security.enums.SecurityExceptionCode;
+import com.javanauta.ts.taskscheduler.adapters.in.security.exception.enums.SecurityExceptionCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

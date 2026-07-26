@@ -1,4 +1,4 @@
-package com.javanauta.ts.taskscheduler.adapters.in.security.enums;
+package com.javanauta.ts.taskscheduler.adapters.in.security.exception.enums;
 
 import com.javanauta.ts.taskscheduler.shared.exception.ExceptionCode;
 

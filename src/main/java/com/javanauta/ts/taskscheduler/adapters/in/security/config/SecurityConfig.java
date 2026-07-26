@@ -1,9 +1,9 @@
 package com.javanauta.ts.taskscheduler.adapters.in.security.config;
 
-import com.javanauta.ts.taskscheduler.adapters.in.security.JwtRequestFilter;
+import com.javanauta.ts.taskscheduler.adapters.in.security.authentication.ForwardedIdentityFilter;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,45 +17,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @SecurityScheme(name = SecurityConfig.SECURITY_SCHEME, type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
+@RequiredArgsConstructor
 public class SecurityConfig {
     public static final String SECURITY_SCHEME = "bearerAuth";
+    private final ForwardedIdentityFilter forwardedIdentityFilter;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
-    // JwtUtil and UserDetailsService instances injected by Spring
-    private final JwtRequestFilter jwtRequestFilter;
-    private final AuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    // Constructor for dependency injection of JwtUtil and UserDetailsService
-    @Autowired
-    public SecurityConfig(JwtRequestFilter jwtRequestFilter, AuthenticationEntryPoint jwtAuthenticationEntryPoint) {
-        this.jwtRequestFilter = jwtRequestFilter;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-
-    }
-
-    // Security filter configuration
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
-        // Creates a JwtRequestFilter instance using JwtUtil and UserDetailsService
-
-        http
-                .csrf(AbstractHttpConfigurer::disable) // Disables CSRF protection for REST APIs (not needed in stateless APIs)
-
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sets session policy to stateless
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
-
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated() // Requires authentication for all other requests
                 )
-
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Adds JWT filter before default authentication filter
-
-        // Returns the built security configuration
-        return http.build();
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint))
+                .addFilterBefore(
+                        forwardedIdentityFilter,
+                        UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 }
