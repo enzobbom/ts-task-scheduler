@@ -8,9 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface MongoTaskRepository extends MongoRepository<Task, String> {
     List<Task> findByNotificationStatusInAndScheduledDateTimeBetween(Collection<NotificationStatus> statuses, Instant initialDateTime, Instant finalDateTime);
-    List<Task> findByUserEmail(String userEmail);
+    List<Task> findByUserId(UUID userId);
 }

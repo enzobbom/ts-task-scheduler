@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class TaskPersisterAdapter implements TaskPersister {
     }
 
     @Override
-    public List<Task> findByUserEmail(String userEmail) {
-        return taskRepository.findByUserEmail(userEmail);
+    public List<Task> findByUserId(UUID userId) {
+        return taskRepository.findByUserId(userId);
     }
 }

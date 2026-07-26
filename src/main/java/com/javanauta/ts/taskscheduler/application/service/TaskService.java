@@ -40,7 +40,7 @@ public class TaskService {
     }
 
     public List<Task> getTasks() {
-        return taskPersister.findByUserEmail(principalProvider.getEmail());
+        return taskPersister.findByUserId(principalProvider.getId());
     }
 
     public void deleteTask(String id) {
@@ -113,7 +113,7 @@ public class TaskService {
     }
 
     private void validateTaskOwnership(Task task) {
-        if (!task.getUserEmail().equals(principalProvider.getEmail())) {
+        if (!task.getUserId().equals(principalProvider.getId())) {
             throw new ApplicationException(ServiceExceptionCode.NO_TASK_OWNERSHIP);
         }
     }
