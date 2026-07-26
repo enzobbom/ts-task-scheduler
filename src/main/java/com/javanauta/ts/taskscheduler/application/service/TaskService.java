@@ -28,8 +28,10 @@ public class TaskService {
     // Controller
 
     public Task createTask(TaskData taskData) {
-        String userEmail = principalProvider.getEmail();
-        Task task = Task.create(taskData, userEmail);
+        Task task = Task.create(
+                taskData,
+                principalProvider.getId(),
+                principalProvider.getEmail());
 
         Task savedTask = taskPersister.save(task);
         log.info("Task {} created", savedTask.getId());

@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -34,6 +35,7 @@ public class Task {
     private Instant creationDateTime;
     private Instant scheduledDateTime;
     @Indexed
+    private UUID userId;
     private String userEmail;
     private Instant modificationDateTime;
     private NotificationStatus notificationStatus;
@@ -41,10 +43,11 @@ public class Task {
 
     private final static String SCHEDULED_DATETIME_FIELD_NAME = "scheduledDateTime";
 
-    private Task(String name, String description, Instant scheduledDateTime, String userEmail, ZoneId timeZoneId) {
+    private Task(String name, String description, Instant scheduledDateTime, UUID userId, String userEmail, ZoneId timeZoneId) {
         this.name = name;
         this.description = description;
         this.scheduledDateTime = scheduledDateTime;
+        this.userId = userId;
         this.userEmail = userEmail;
         this.timeZoneId = timeZoneId;
 
@@ -54,11 +57,12 @@ public class Task {
         validateScheduledDate();
     }
 
-    public static Task create(TaskData taskData, String userEmail) {
+    public static Task create(TaskData taskData, UUID userId, String userEmail) {
         return new Task(
                 taskData.name(),
                 taskData.description(),
                 taskData.scheduledDateTime(),
+                userId,
                 userEmail,
                 taskData.timeZoneId());
     }

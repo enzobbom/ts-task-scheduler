@@ -3,6 +3,6 @@ package com.javanauta.ts.taskscheduler.ports.out.security;
 import java.util.UUID;
 
 public interface PrincipalProvider {
-    UUID getUserId();
+    UUID getId();
     String getEmail();
 }

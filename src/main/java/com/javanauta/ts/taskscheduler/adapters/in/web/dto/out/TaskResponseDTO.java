@@ -4,6 +4,7 @@ import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
 import lombok.Builder;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Builder
 public record TaskResponseDTO(
@@ -12,6 +13,7 @@ public record TaskResponseDTO(
         String description,
         Instant creationDateTime,
         Instant scheduledDateTime,
+        UUID userId,
         String userEmail,
         Instant modificationDateTime,
         NotificationStatus notificationStatus,
