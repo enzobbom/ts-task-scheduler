@@ -27,8 +27,6 @@ public class MongoConfig {
             @Value("${spring.data.mongodb.uri}") String uri,
             @Value("${spring.data.mongodb.uuid-representation}") UuidRepresentation uuidRepresentation) {
 
-        log.info("Using MongoDB URI: {}", uri);
-
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
                 .uuidRepresentation(uuidRepresentation)
                 .applyConnectionString(new ConnectionString(uri))
