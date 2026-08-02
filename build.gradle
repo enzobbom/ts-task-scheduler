@@ -7,7 +7,7 @@ plugins {
 
 group = 'com.javanauta.ts'
 version = '0.0.1-SNAPSHOT'
-description = 'Task Scheduler - Task scheduler module'
+description = 'Task Scheduler - Task module'
 
 java {
 	toolchain {
