@@ -22,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document("task")
+@Document("tasks")
 @CompoundIndex(
         name = "notification_schedule_idx",
         def = "{'notificationStatus': 1, 'scheduledDateTime': 1}"
