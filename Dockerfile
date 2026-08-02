@@ -14,8 +14,8 @@ COPY . .
 RUN gradle build --no-daemon
 FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar /app/task-scheduler.jar
+COPY --from=build /app/build/libs/*.jar /app/task.jar
 EXPOSE 8081
-CMD ["java", "-jar", "/app/task-scheduler.jar"]
+CMD ["java", "-jar", "/app/task.jar"]
 
 

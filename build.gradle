@@ -67,7 +67,7 @@ tasks.named('test') {
 
 sonarqube {
     properties {
-        property 'sonar.projectKey', 'task-scheduler'
+        property 'sonar.projectKey', 'task'
         property 'sonar.host.url', 'http://localhost:9000'
         property 'sonar.login', 'squ_dc76e8eeb6ed2d1dfc066db1af123d8dde47f3f6'
     }
