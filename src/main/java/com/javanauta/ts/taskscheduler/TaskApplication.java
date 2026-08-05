@@ -9,8 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(exclude = MongoAutoConfiguration.class)
 @EnableScheduling
 @EnableRabbit
-public class TaskSchedulerApplication {
+public class TaskApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(TaskSchedulerApplication.class, args);
+		SpringApplication.run(TaskApplication.class, args);
 	}
 }
