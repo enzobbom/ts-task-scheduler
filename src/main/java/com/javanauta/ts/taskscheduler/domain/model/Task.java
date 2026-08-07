@@ -1,6 +1,6 @@
 package com.javanauta.ts.taskscheduler.domain.model;
 
-import com.javanauta.ts.taskscheduler.domain.data.TaskData;
+import com.javanauta.ts.taskscheduler.application.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainExceptionCode;
 import com.javanauta.ts.taskscheduler.domain.exception.enums.DomainValidationExceptionCode;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
@@ -8,26 +8,34 @@ import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import com.javanauta.ts.taskscheduler.shared.exception.ValidationExceptionDetail;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document("task")
+@Document("tasks")
+@CompoundIndex(
+        name = "notification_schedule_idx",
+        def = "{'notificationStatus': 1, 'scheduledDateTime': 1}"
+)
 public class Task {
-
     @Id
     private String id;
     private String name;
     private String description;
     private Instant creationDateTime;
     private Instant scheduledDateTime;
+    @Indexed
+    private UUID userId;
     private String userEmail;
     private Instant modificationDateTime;
     private NotificationStatus notificationStatus;
@@ -35,10 +43,11 @@ public class Task {
 
     private final static String SCHEDULED_DATETIME_FIELD_NAME = "scheduledDateTime";
 
-    private Task(String name, String description, Instant scheduledDateTime, String userEmail, ZoneId timeZoneId) {
+    private Task(String name, String description, Instant scheduledDateTime, UUID userId, String userEmail, ZoneId timeZoneId) {
         this.name = name;
         this.description = description;
         this.scheduledDateTime = scheduledDateTime;
+        this.userId = userId;
         this.userEmail = userEmail;
         this.timeZoneId = timeZoneId;
 
@@ -48,11 +57,12 @@ public class Task {
         validateScheduledDate();
     }
 
-    public static Task create(TaskData taskData, String userEmail) {
+    public static Task create(TaskData taskData, UUID userId, String userEmail) {
         return new Task(
                 taskData.name(),
                 taskData.description(),
                 taskData.scheduledDateTime(),
+                userId,
                 userEmail,
                 taskData.timeZoneId());
     }
@@ -65,13 +75,17 @@ public class Task {
 
     public void update(TaskData taskData) {
         if (taskData.name() != null) { name = taskData.name(); }
-        if (taskData.description() != null) { description = taskData.description(); }
+        if (taskData.description() != null) { description = taskData.description().isBlank() ? null : taskData.description(); }
         if (taskData.scheduledDateTime() != null) {
             scheduledDateTime = taskData.scheduledDateTime();
             validateScheduledDate();
         }
         if (taskData.timeZoneId() != null) { timeZoneId = taskData.timeZoneId(); }
         modificationDateTime = Instant.now();
+    }
+
+    public boolean canBeNotified() {
+        return NotificationStatus.notifiableStatuses().contains(notificationStatus);
     }
 
     private void validateScheduledDate() {

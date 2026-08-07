@@ -1,17 +1,18 @@
 package com.javanauta.ts.taskscheduler.application.service;
 
-import com.javanauta.ts.taskscheduler.application.exception.ServiceValidationException;
+import com.javanauta.ts.taskscheduler.application.data.NotificationResultDetails;
+import com.javanauta.ts.taskscheduler.application.data.enums.NotificationResult;
 import com.javanauta.ts.taskscheduler.application.exception.enums.ServiceExceptionCode;
-import com.javanauta.ts.taskscheduler.application.ports.CurrentUserProvider;
-import com.javanauta.ts.taskscheduler.domain.data.TaskData;
+import com.javanauta.ts.taskscheduler.application.data.TaskData;
 import com.javanauta.ts.taskscheduler.domain.model.Task;
 import com.javanauta.ts.taskscheduler.domain.model.enums.NotificationStatus;
-import com.javanauta.ts.taskscheduler.infrastructure.repository.TaskRepository;
+import com.javanauta.ts.taskscheduler.ports.out.messaging.NotificationRequestPublisher;
+import com.javanauta.ts.taskscheduler.ports.out.persistence.TaskPersister;
+import com.javanauta.ts.taskscheduler.ports.out.security.PrincipalProvider;
 import com.javanauta.ts.taskscheduler.shared.exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -20,75 +21,107 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class TaskService {
+    private final TaskPersister taskPersister;
+    private final PrincipalProvider principalProvider;
+    private final NotificationRequestPublisher notificationRequestPublisher;
 
-    private final TaskRepository taskRepository;
-    private final CurrentUserProvider currentUserProvider;
+    // Controller
 
     public Task createTask(TaskData taskData) {
-        String userEmail = currentUserProvider.getEmail();
-        Task task = Task.create(taskData, userEmail);
+        Task task = Task.create(
+                taskData,
+                principalProvider.getId(),
+                principalProvider.getEmail());
 
-        Task savedTask = taskRepository.save(task);
+        Task savedTask = taskPersister.save(task);
         log.info("Task {} created", savedTask.getId());
 
         return savedTask;
     }
 
-    // End point to use internally. Will be refactored to be authenticated using M2M
-    public List<Task> findTasksByTimePeriod(Instant initialDateTime, Instant finalDateTime) {
-        validateTimePeriod(initialDateTime, finalDateTime);
-        return taskRepository.findByScheduledDateTimeBetween(initialDateTime, finalDateTime);
-    }
-
-    public List<Task> findTasksByUserEmail() {
-        return taskRepository.findByUserEmail(currentUserProvider.getEmail());
+    public List<Task> getTasks() {
+        return taskPersister.findByUserId(principalProvider.getId());
     }
 
     public void deleteTask(String id) {
         Task task = getTaskOrThrow(id);
         validateTaskOwnership(task);
-        taskRepository.deleteById(id);
+        taskPersister.deleteById(id);
 
         log.info("Task {} deleted", id);
     }
 
-    @Transactional
-    public Task updateTaskStatus(NotificationStatus notificationStatus, String id) {
-        Task task = getTaskOrThrow(id);
-        validateTaskOwnership(task);
-        task.updateStatus(notificationStatus);
-
-        log.info("Status of task {} updated", id);
-        return task;
-    }
-
-    @Transactional
     public Task updateTask(TaskData taskData, String id) {
         Task task = getTaskOrThrow(id);
         validateTaskOwnership(task);
         task.update(taskData);
+        Task updatedTask = taskPersister.save(task);
 
         log.info("Task {} updated", id);
-        return task;
+        return updatedTask;
+    }
+
+    // Scheduler
+
+    public List<Task> findTasksToNotify(Instant initialDateTime, Instant finalDateTime) {
+        return taskPersister.findByNotificationStatusInAndScheduledDateTimeBetween(
+                NotificationStatus.notifiableStatuses(),
+                initialDateTime,
+                finalDateTime);
+    }
+
+    public void requestTaskNotification(Task task) {
+        if (!task.canBeNotified()) { return; }
+
+        notificationRequestPublisher.publishNotificationRequest(task);
+        updateTaskStatus(task, NotificationStatus.DISPATCHED);
+
+        log.info("Notification request for Task '{}' was successfully dispatched", task.getId());
+    }
+
+    // Messaging Broker
+
+    public void processTaskNotificationCompletion(NotificationResultDetails resultDetails) {
+        String taskId = resultDetails.taskId();
+        Task task = getTaskOrThrow(taskId);
+        updateTaskStatus(task, NotificationStatus.NOTIFIED);
+
+        log.info("Notification for Task '{}' was successfully completed", taskId);
+    }
+
+    public void processTaskNotificationFailure(NotificationResultDetails resultDetails) {
+        NotificationResult notificationResult = resultDetails.notificationResult();
+        String taskId = resultDetails.taskId();
+
+        log.info("Notification for Task '{}' failed ({})", taskId, notificationResult.name().toLowerCase());
+        Task task = getTaskOrThrow(taskId);
+
+        NotificationStatus newStatus = switch (notificationResult) {
+            case TEMPORARY_FAILURE -> NotificationStatus.PENDING_RETRY;
+            case PERMANENT_FAILURE -> NotificationStatus.FAILED;
+            default -> throw new IllegalArgumentException("Only 'FAILURE' results are expected here");
+        };
+
+        updateTaskStatus(task, newStatus);
     }
 
     // internal helper/validation methods
 
     private Task getTaskOrThrow(String id) {
-        return taskRepository.findById(id).orElseThrow(()
+        return taskPersister.findById(id).orElseThrow(()
                 -> new ApplicationException(ServiceExceptionCode.TASK_NOT_FOUND));
     }
 
     private void validateTaskOwnership(Task task) {
-        if (!task.getUserEmail().equals(currentUserProvider.getEmail())) {
+        if (!task.getUserId().equals(principalProvider.getId())) {
             throw new ApplicationException(ServiceExceptionCode.NO_TASK_OWNERSHIP);
         }
     }
 
-    // To be refactored and used internally only!!!
-    private void validateTimePeriod(Instant initialDateTime, Instant finalDateTime) {
-        if (!initialDateTime.isBefore(finalDateTime)) {
-            throw new ServiceValidationException("Initial date time must be before final date time");
-        }
+    private void updateTaskStatus(Task task, NotificationStatus status) {
+        task.updateStatus(status);
+        taskPersister.save(task);
+
+        log.info("Status of task {} updated to {}", task.getId(), status);
     }
 }

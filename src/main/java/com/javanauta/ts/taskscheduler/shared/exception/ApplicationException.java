@@ -6,7 +6,6 @@ import java.util.List;
 
 @Getter
 public class ApplicationException extends RuntimeException {
-
     private final ExceptionCode code;
     private final String message;
     private final List<ValidationExceptionDetail> validationExceptionDetails;

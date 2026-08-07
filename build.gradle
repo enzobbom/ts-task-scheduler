@@ -1,13 +1,13 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.0'
+	id 'org.springframework.boot' version '4.0.1'
 	id 'io.spring.dependency-management' version '1.1.7'
-    id "org.sonarqube" version "7.2.3.7755"
+    id 'org.sonarqube' version '7.2.3.7755'
 }
 
 group = 'com.javanauta.ts'
-version = '0.0.1-SNAPSHOT'
-description = 'Task Scheduler - Task scheduler module'
+version = '1.0.0-SNAPSHOT'
+description = 'Task Scheduler - Task module'
 
 java {
 	toolchain {
@@ -21,25 +21,24 @@ configurations {
 	}
 }
 
-repositories {
-	mavenCentral()
-}
-
 ext {
-	set('springCloudVersion', "2025.1.0")
+	set('springCloudVersion', '2025.1.0')
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:4.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
     implementation 'org.mapstruct:mapstruct:1.6.3'
     implementation 'org.mapstruct:mapstruct-processor:1.6.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'com.github.enzobbom:ts-events:v1.0.0'
+    implementation 'com.github.enzobbom:ts-api-contract:v1.1.0'
 
 	compileOnly 'org.projectlombok:lombok'
 
@@ -62,14 +61,18 @@ dependencyManagement {
 	}
 }
 
+tasks.named('jar') {
+    enabled = false
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
 
 sonarqube {
     properties {
-        property "sonar.projectKey", "task-scheduler"
-        property "sonar.host.url", "http://localhost:9000"
-        property "sonar.login", "squ_dc76e8eeb6ed2d1dfc066db1af123d8dde47f3f6"
+        property 'sonar.projectKey', 'task'
+        property 'sonar.host.url', 'http://localhost:9000'
+        property 'sonar.login', 'squ_dc76e8eeb6ed2d1dfc066db1af123d8dde47f3f6'
     }
 }
